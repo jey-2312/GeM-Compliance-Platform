@@ -26,5 +26,12 @@
       "verified_value": 48000000,
       "details": "Mock source confirms audited turnover value of INR 4.8 crore."
     }
+  },
+  "oem": {
+    "BIDDER-001": {
+      "status": "VERIFIED",
+      "verified_value": "ACTIVE",
+      "details": "Mock source confirms an active OEM authorization for the demo bidder."
+    }
   }
 }

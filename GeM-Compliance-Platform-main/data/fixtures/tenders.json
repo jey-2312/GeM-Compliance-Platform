@@ -1,20 +1,62 @@
 [
   {
     "id": "TND-001",
-    "title": "Sample CPCL Procurement Tender - Tender A",
-    "reference_no": "CPCL/PROC/2026/001",
-    "closing_date": "2026-09-30",
-    "documents": ["DOC-TENDER-001"],
-    "requirements": ["REQ-001", "REQ-002", "REQ-003", "REQ-004"],
+    "title": "Supply, Installation, Integration and Comprehensive Maintenance of Intelligent Learning Infrastructure for Government Residential Schools",
+    "reference_no": "NPIA/EDU-ICT/2026/014",
+    "closing_date": "2026-10-30",
+    "documents": [
+      "DOC-TENDER-001"
+    ],
+    "requirements": [
+      "REQ-TND-001-001",
+      "REQ-TND-001-002",
+      "REQ-TND-001-003",
+      "REQ-TND-001-004",
+      "REQ-TND-001-005",
+      "REQ-TND-001-006",
+      "REQ-TND-001-007",
+      "REQ-TND-001-008",
+      "REQ-TND-001-009",
+      "REQ-TND-001-010",
+      "REQ-TND-001-011",
+      "REQ-TND-001-012",
+      "REQ-TND-001-013",
+      "REQ-TND-001-014",
+      "REQ-TND-001-015",
+      "REQ-TND-001-016",
+      "REQ-TND-001-017",
+      "REQ-TND-001-018"
+    ],
     "status": "READY"
   },
   {
     "id": "TND-002",
-    "title": "Sample CPCL Procurement Tender - Tender B",
-    "reference_no": "CPCL/PROC/2026/002",
-    "closing_date": "2026-10-15",
-    "documents": ["DOC-TENDER-002"],
-    "requirements": ["REQ-005", "REQ-006", "REQ-007", "REQ-008"],
+    "title": "Supply, Installation and Five-Year Operations & Maintenance of Secure Campus Network Infrastructure for Government Training Institutes",
+    "reference_no": "NPIA/NETSEC/2026/018",
+    "closing_date": "2026-11-12",
+    "documents": [
+      "DOC-TENDER-002"
+    ],
+    "requirements": [
+      "REQ-TND-002-001",
+      "REQ-TND-002-002",
+      "REQ-TND-002-003",
+      "REQ-TND-002-004",
+      "REQ-TND-002-005",
+      "REQ-TND-002-006",
+      "REQ-TND-002-007",
+      "REQ-TND-002-008",
+      "REQ-TND-002-009",
+      "REQ-TND-002-010",
+      "REQ-TND-002-011",
+      "REQ-TND-002-012",
+      "REQ-TND-002-013",
+      "REQ-TND-002-014",
+      "REQ-TND-002-015",
+      "REQ-TND-002-016",
+      "REQ-TND-002-017",
+      "REQ-TND-002-018"
+    ],
     "status": "READY"
   }
 ]

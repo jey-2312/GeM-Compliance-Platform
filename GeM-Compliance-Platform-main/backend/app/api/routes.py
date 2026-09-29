@@ -151,8 +151,8 @@ def _identify_seed_tender(page_text: str, file_name: str, state: AppState) -> tu
     The decision is made from extracted PDF text, never from a frontend tender selector.
     """
     candidates = [
-        ("CPCL/PROC/2026/001", "TND-001"),
-        ("CPCL/PROC/2026/002", "TND-002"),
+        ("NPIA/EDU-ICT/2026/014", "TND-001"),
+        ("NPIA/NETSEC/2026/018", "TND-002"),
     ]
     normalized = page_text.upper()
     for reference, tender_id in candidates:

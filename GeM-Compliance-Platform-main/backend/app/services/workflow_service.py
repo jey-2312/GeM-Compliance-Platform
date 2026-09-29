@@ -35,6 +35,7 @@ from app.services.seed_loader import load_all_fixtures
 from app.verification import (
     MockFinancialVerificationConnector,
     MockGSTConnector,
+    MockOEMConnector,
     MockPANConnector,
     MockUdyamConnector,
 )
@@ -378,6 +379,9 @@ class WorkflowService:
                     )
                 continue
 
+            if requirement.rule_id == "RULE-MANUAL-REVIEW":
+                continue
+
             field_name = self._field_name_for_status_requirement(requirement)
             template = self._find_passport_evidence(bidder.id, field_name)
             if template is None:
@@ -397,11 +401,13 @@ class WorkflowService:
             "gst_status": MockGSTConnector(),
             "pan_status": MockPANConnector(),
             "udyam_status": MockUdyamConnector(),
+            "oem_authorization_status": MockOEMConnector(),
         }
         subject_by_field = {
             "gst_status": bidder.gstin,
             "pan_status": bidder.pan,
             "udyam_status": bidder.udyam,
+            "oem_authorization_status": bidder.id,
         }
 
         for requirement in requirements:
@@ -606,6 +612,7 @@ class WorkflowService:
             "RULE-GST-ACTIVE": "gst_status",
             "RULE-PAN-VALID": "pan_status",
             "RULE-UDYAM-ACTIVE": "udyam_status",
+            "RULE-OEM-AUTHORIZATION-ACTIVE": "oem_authorization_status",
         }
         try:
             return mapping[requirement.rule_id]

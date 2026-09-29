@@ -53,5 +53,16 @@
     "text_extraction_method": "PYMUPDF",
     "ocr_used": false,
     "uploaded_at": "2026-09-17T09:00:00+05:30"
+  },
+  {
+    "id": "DOC-006",
+    "bidder_id": "BIDDER-001",
+    "name": "OEM_Authorization_Letter.pdf",
+    "document_type": "OEM_AUTHORIZATION",
+    "path_or_uri": "data/bidders/abc/OEM_Authorization_Letter.pdf",
+    "page_count": 2,
+    "text_extraction_method": "PYMUPDF",
+    "ocr_used": false,
+    "uploaded_at": "2026-09-17T09:00:00+05:30"
   }
 ]

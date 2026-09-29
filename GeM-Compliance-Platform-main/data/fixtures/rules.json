@@ -34,5 +34,23 @@
     "threshold_source": "required_status:ACTIVE",
     "mandatory": true,
     "version": "1.0"
+  },
+  {
+    "id": "RULE-OEM-AUTHORIZATION-ACTIVE",
+    "type": "STATUS_COMPARISON",
+    "field": "oem_authorization_status",
+    "operator": "STATUS_ACTIVE",
+    "threshold_source": "required_status:ACTIVE",
+    "mandatory": true,
+    "version": "1.0"
+  },
+  {
+    "id": "RULE-MANUAL-REVIEW",
+    "type": "MANUAL_REVIEW",
+    "field": "document_or_claim",
+    "operator": "EQUAL",
+    "threshold_source": "tender_requirement",
+    "mandatory": true,
+    "version": "1.0"
   }
 ]

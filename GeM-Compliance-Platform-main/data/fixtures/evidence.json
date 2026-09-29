@@ -2,7 +2,7 @@
   {
     "id": "EVD-011",
     "bidder_id": "BIDDER-001",
-    "requirement_id": "REQ-001",
+    "requirement_id": "REQ-TND-001-001",
     "document_id": "DOC-002",
     "page": 2,
     "evidence_type": "DOCUMENT_EXTRACT",
@@ -17,7 +17,7 @@
   {
     "id": "EVD-012",
     "bidder_id": "BIDDER-001",
-    "requirement_id": "REQ-001",
+    "requirement_id": "REQ-TND-001-001",
     "document_id": "DOC-001",
     "page": 12,
     "evidence_type": "DOCUMENT_EXTRACT",
@@ -32,7 +32,7 @@
   {
     "id": "EVD-001",
     "bidder_id": "BIDDER-001",
-    "requirement_id": "REQ-002",
+    "requirement_id": "REQ-TND-001-002",
     "document_id": "DOC-003",
     "page": 1,
     "evidence_type": "DOCUMENT_EXTRACT",
@@ -47,7 +47,7 @@
   {
     "id": "EVD-002",
     "bidder_id": "BIDDER-001",
-    "requirement_id": "REQ-003",
+    "requirement_id": "REQ-TND-001-003",
     "document_id": "DOC-004",
     "page": 1,
     "evidence_type": "DOCUMENT_EXTRACT",
@@ -62,7 +62,7 @@
   {
     "id": "EVD-003",
     "bidder_id": "BIDDER-001",
-    "requirement_id": "REQ-004",
+    "requirement_id": "REQ-TND-001-004",
     "document_id": "DOC-005",
     "page": 1,
     "evidence_type": "DOCUMENT_EXTRACT",
@@ -73,5 +73,20 @@
     "confidence": 0.98,
     "verification_status": "VERIFIED",
     "notes": null
+  },
+  {
+    "id": "EVD-004",
+    "bidder_id": "BIDDER-001",
+    "requirement_id": "REQ-TND-001-005",
+    "document_id": "DOC-006",
+    "page": 1,
+    "evidence_type": "DOCUMENT_EXTRACT",
+    "field_name": "oem_authorization_status",
+    "value": "ACTIVE",
+    "unit": null,
+    "source_label": "OEM Authorization Letter",
+    "confidence": 0.95,
+    "verification_status": "UNVERIFIED",
+    "notes": "Mock OEM authorization evidence for prototype demonstration."
   }
 ]

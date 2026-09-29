@@ -17,11 +17,12 @@ from app.verification import (
     MockGSTConnector,
     MockPANConnector,
     MockUdyamConnector,
+    MockOEMConnector,
 )
 from app.verification.base import VerificationConnector
 
 
-SUPPORTED_KINDS = ("gst", "pan", "udyam", "financial")
+SUPPORTED_KINDS = ("gst", "pan", "udyam", "financial", "oem")
 
 
 class VerificationService:
@@ -44,6 +45,7 @@ class VerificationService:
                 "pan": MockPANConnector(),
                 "udyam": MockUdyamConnector(),
                 "financial": MockFinancialVerificationConnector(),
+                "oem": MockOEMConnector(),
             }
         )
 
