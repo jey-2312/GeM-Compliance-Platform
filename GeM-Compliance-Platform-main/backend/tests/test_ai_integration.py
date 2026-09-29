@@ -28,7 +28,7 @@ def test_ai_candidate_to_backend_requirement_contract():
         threshold=50_000_000,
         unit="INR",
         mandatory=True,
-        source_page=7,
+        source_page=6,
         confidence=0.96,
     )
     result = RequirementExtractionResult(tender_id="TND-001", requirements=[candidate])
@@ -39,7 +39,7 @@ def test_ai_candidate_to_backend_requirement_contract():
     domain_req = TenderRequirement.model_validate(adapted[0].model_dump())
     assert domain_req.id == "REQ-TND-001-001"
     assert domain_req.source_document_id == "DOC-TENDER-001"
-    assert domain_req.source_page == 7
+    assert domain_req.source_page == 6
     assert domain_req.rule_id == "RULE-TURNOVER-GTE"
 
 
@@ -138,8 +138,8 @@ def test_invalid_llm_item_is_not_silently_dropped(monkeypatch):
 
 
 def test_prompt_preserves_page_and_untrusted_data_rules():
-    prompt = build_user_prompt("TND-001", "===== PAGE 7 =====\nMinimum turnover 5 Cr")
-    assert "PAGE 7" in prompt
+    prompt = build_user_prompt("TND-001", "===== PAGE 6 =====\nMinimum turnover 5 Cr")
+    assert "PAGE 6" in prompt
     assert "TND-001" in prompt
 
 
@@ -148,7 +148,7 @@ def test_explanation_adapter_accepts_actual_backend_models():
     from app.models.domain import ComplianceResult, Verification
 
     requirement = TenderRequirement(
-        id="REQ-001",
+        id="REQ-TND-001-001",
         tender_id="TND-001",
         type="TURNOVER",
         title="Minimum Average Annual Turnover",
@@ -158,7 +158,7 @@ def test_explanation_adapter_accepts_actual_backend_models():
         unit="INR",
         mandatory=True,
         source_document_id="DOC-TENDER-001",
-        source_page=7,
+        source_page=6,
         confidence=0.96,
         rule_id="RULE-TURNOVER-GTE",
     )
@@ -166,7 +166,7 @@ def test_explanation_adapter_accepts_actual_backend_models():
         id="CMP-001",
         tender_id="TND-001",
         bidder_id="BIDDER-001",
-        requirement_id="REQ-001",
+        requirement_id="REQ-TND-001-001",
         status="FAIL",
         rule_id="RULE-TURNOVER-GTE",
         expected=50_000_000,
@@ -207,7 +207,7 @@ def test_ai_candidate_flows_into_turnover_rule():
         threshold=50_000_000,
         unit="INR",
         mandatory=True,
-        source_page=7,
+        source_page=6,
         confidence=0.96,
     )
     requirement = adapt_requirement_candidates(

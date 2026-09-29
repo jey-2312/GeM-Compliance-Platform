@@ -30,7 +30,7 @@ def _loaded_engine() -> tuple[dict, EvidenceEngine]:
 def test_create_evidence_from_extracted_field_uses_normalized_value():
     loaded = load_all_fixtures(FIXTURES)
     bidder = loaded["bidders.json"][0]
-    requirement = next(r for r in loaded["requirements.json"] if r.id == "REQ-001")
+    requirement = next(r for r in loaded["requirements.json"] if r.id == "REQ-TND-001-001")
     document = next(d for d in loaded["documents.json"] if d.id == "DOC-001")
     field = next(f for f in loaded["extracted_fields.json"] if f.id == "FIELD-001")
 
@@ -43,7 +43,7 @@ def test_create_evidence_from_extracted_field_uses_normalized_value():
     )
 
     assert evidence.id == "EVD-001"
-    assert evidence.requirement_id == "REQ-001"
+    assert evidence.requirement_id == "REQ-TND-001-001"
     assert evidence.document_id == "DOC-001"
     assert evidence.page == 12
     assert evidence.field_name == "average_annual_turnover"
@@ -58,7 +58,7 @@ def test_create_evidence_from_extracted_field_uses_normalized_value():
 def test_deduplication_does_not_duplicate_same_extraction():
     loaded = load_all_fixtures(FIXTURES)
     bidder = loaded["bidders.json"][0]
-    requirement = next(r for r in loaded["requirements.json"] if r.id == "REQ-001")
+    requirement = next(r for r in loaded["requirements.json"] if r.id == "REQ-TND-001-001")
     document = next(d for d in loaded["documents.json"] if d.id == "DOC-001")
     field = next(f for f in loaded["extracted_fields.json"] if f.id == "FIELD-001")
 
@@ -218,7 +218,7 @@ def test_verify_and_attach_rejects_connector_returning_wrong_evidence_id():
 def test_verify_and_attach_uses_mock_financial_connector():
     loaded = load_all_fixtures(FIXTURES)
     bidder = loaded["bidders.json"][0]
-    requirement = next(r for r in loaded["requirements.json"] if r.id == "REQ-001")
+    requirement = next(r for r in loaded["requirements.json"] if r.id == "REQ-TND-001-001")
     document = next(d for d in loaded["documents.json"] if d.id == "DOC-001")
     field = next(f for f in loaded["extracted_fields.json"] if f.id == "FIELD-001")
 
@@ -253,7 +253,7 @@ def test_evidence_for_requirement_is_sorted_by_page_then_id():
     loaded, engine = _loaded_engine()
     matches = engine.get_evidence_for_requirement(
         bidder_id="BIDDER-001",
-        requirement_id="REQ-001",
+        requirement_id="REQ-TND-001-001",
     )
 
     assert [item.id for item in matches] == ["EVD-011", "EVD-012"]
@@ -268,7 +268,7 @@ def test_evidence_chain_contains_requirement_rule_evidence_and_verification():
         documents=loaded["documents.json"],
         extracted_fields=loaded["extracted_fields.json"],
     )
-    requirement = next(r for r in loaded["requirements.json"] if r.id == "REQ-001")
+    requirement = next(r for r in loaded["requirements.json"] if r.id == "REQ-TND-001-001")
     rule = next(r for r in loaded["rules.json"] if r.id == "RULE-TURNOVER-GTE")
     compliance = next(r for r in loaded["compliance_results.json"] if r.id == "CMP-001")
     audit = next(r for r in loaded["audit_events.json"] if r.id == "AUD-001")
@@ -280,7 +280,7 @@ def test_evidence_chain_contains_requirement_rule_evidence_and_verification():
         audit_event=audit,
     )
 
-    assert chain["requirement"]["id"] == "REQ-001"
+    assert chain["requirement"]["id"] == "REQ-TND-001-001"
     assert chain["rule"]["id"] == "RULE-TURNOVER-GTE"
     assert len(chain["evidence"]) == 2
     audited = next(node for node in chain["evidence"] if node["evidence"]["id"] == "EVD-012")
@@ -297,7 +297,7 @@ def test_evidence_chain_contains_requirement_rule_evidence_and_verification():
 def test_full_evidence_to_rule_flow_uses_verified_value():
     loaded = load_all_fixtures(FIXTURES)
     bidder = loaded["bidders.json"][0]
-    requirement = next(r for r in loaded["requirements.json"] if r.id == "REQ-001")
+    requirement = next(r for r in loaded["requirements.json"] if r.id == "REQ-TND-001-001")
     document = next(d for d in loaded["documents.json"] if d.id == "DOC-001")
     field = next(f for f in loaded["extracted_fields.json"] if f.id == "FIELD-001")
 

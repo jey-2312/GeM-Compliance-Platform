@@ -115,7 +115,7 @@ def run_explanation_demo() -> None:
     evidence = [Evidence.model_validate(item) for item in _load_json("evidence.json")]
     verifications = [Verification.model_validate(item) for item in _load_json("verifications.json")]
 
-    req = next(req for req in requirements if req.id == "REQ-001")
+    req = next(req for req in requirements if req.id == "REQ-TND-001-001")
     result = evaluate_turnover_requirement(
         req,
         evidence,

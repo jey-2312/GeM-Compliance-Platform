@@ -24,8 +24,8 @@ def test_tender_a_upload_creates_case_and_evaluates():
     assert response.status_code == 200
     body = response.json()
     assert body["tender"]["id"] == "TND-001"
-    assert body["requirements"][0]["source_page"] == 7
-    assert body["evaluation"]["summary"] == {"FAIL": 1, "PASS": 3}
+    assert body["requirements"][0]["source_page"] == 6
+    assert body["evaluation"]["summary"] == {"FAIL": 1, "PASS": 4, "MANUAL_REVIEW": 13}
 
 
 def test_tender_b_upload_uses_new_threshold():
@@ -35,7 +35,7 @@ def test_tender_b_upload_uses_new_threshold():
     body = response.json()
     assert body["tender"]["id"] == "TND-002"
     assert body["requirements"][0]["source_page"] == 5
-    assert body["evaluation"]["summary"] == {"PASS": 4}
+    assert body["evaluation"]["summary"] == {"PASS": 5, "MANUAL_REVIEW": 13}
 
 
 def test_passport_history_accumulates_reviewed_tenders():

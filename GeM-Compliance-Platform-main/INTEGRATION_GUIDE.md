@@ -77,7 +77,7 @@ Frontend `.env.example`:
 
 ```text
 VITE_API_BASE_URL=/api/v1
-VITE_PROJECT_NAME=PS26100 Procurement Audit Platform
+VITE_PROJECT_NAME=Saanron
 ```
 
 Do not commit real keys or credentials.
@@ -128,11 +128,11 @@ The response drives all status/count displays. No compliance arithmetic is perfo
 
 For the seeded demo:
 
-- Tender A: ₹4.8 Cr verified turnover vs ₹5 Cr requirement → `FAIL`
+- Tender A: ₹4.8 Cr verified turnover vs ₹5 Cr requirement → `FAIL` (18 requirements total; 13 remain `MANUAL_REVIEW`)
 - GST → `PASS`
 - PAN → `PASS`
 - Udyam → `PASS`
-- Tender B: ₹4.8 Cr verified turnover vs ₹3 Cr requirement → `PASS`
+- Tender B: ₹4.8 Cr verified turnover vs ₹4.5 Cr requirement → `PASS` (18 requirements total; 13 remain `MANUAL_REVIEW`)
 
 ### 4. Evidence Drill-Down
 
@@ -177,11 +177,11 @@ The system records the self-declared ₹6.2 Cr and audited/verified ₹4.8 Cr di
 1. Start FastAPI.
 2. Start Vite.
 3. Open Tender A.
-4. Show the four backend-provided requirements and source page 7.
+4. Show the 18 backend-provided requirements and source page 6 for the turnover requirement.
 5. Open Bidder Passport.
 6. Show the self-declared ₹6.2 Cr and audited/verified ₹4.8 Cr evidence.
 7. Open Compliance Matrix and run the backend rule engine.
-8. Show `FAIL 1 / PASS 3` for Tender A.
+8. Show `FAIL 1 / PASS 4 / MANUAL_REVIEW 13` for Tender A.
 9. Open the turnover evidence drill-down.
 10. Show document/page, value, verification source, rule ID and compliance result.
 11. Open Compliance & Contradictions.
@@ -189,7 +189,7 @@ The system records the self-declared ₹6.2 Cr and audited/verified ₹4.8 Cr di
 13. Generate the factual explanation and/or clarification draft.
 14. Record an officer disposition.
 15. Switch to Tender B.
-16. Run the rule engine again and show the same bidder's turnover result becomes `PASS` because the tender threshold is ₹3 Cr.
+16. Run the rule engine again and show the same bidder's turnover result becomes `PASS` because the tender threshold is ₹4.5 Cr.
 17. Show the accumulated audit/activity history.
 
 ## Optional live AI demonstration

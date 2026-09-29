@@ -83,7 +83,7 @@ audit events, evidence chains, and summary.
 
 For the canonical fixture data, Tender A produces a turnover `FAIL` because
 verified turnover is ₹4.8 crore against a ₹5 crore threshold. Tender B can be
-run with the same bidder and produces a turnover `PASS` against its ₹3 crore
+run with the same bidder and produces a turnover `PASS` against its ₹4.5 crore
 threshold.
 
 ## Verification request
@@ -92,7 +92,7 @@ threshold.
 {
   "kind": "gst",
   "subject": "29ABCDE1234F1Z5",
-  "evidence_id": "EVD-003"
+  "evidence_id": "EVD-001"
 }
 ```
 

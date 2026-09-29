@@ -6,7 +6,7 @@
     "action": "COMPLIANCE_EVALUATED",
     "tender_id": "TND-001",
     "bidder_id": "BIDDER-001",
-    "requirement_id": "REQ-001",
+    "requirement_id": "REQ-TND-001-001",
     "rule_id": "RULE-TURNOVER-GTE",
     "result_id": "CMP-001",
     "details": "Rule evaluated against verified evidence."
@@ -18,7 +18,7 @@
     "action": "COMPLIANCE_EVALUATED",
     "tender_id": "TND-002",
     "bidder_id": "BIDDER-001",
-    "requirement_id": "REQ-005",
+    "requirement_id": "REQ-TND-002-001",
     "rule_id": "RULE-TURNOVER-GTE",
     "result_id": "CMP-002",
     "details": "Rule evaluated against verified evidence."

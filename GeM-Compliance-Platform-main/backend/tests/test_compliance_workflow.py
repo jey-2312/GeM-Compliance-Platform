@@ -22,19 +22,19 @@ def test_tender_a_runs_complete_evidence_backed_workflow():
     )
 
     results = report["compliance_results"]
-    assert len(results) == 4
+    assert len(results) == 18
 
     by_requirement = {item["requirement_id"]: item for item in results}
-    assert by_requirement["REQ-001"]["status"] == ComplianceStatus.FAIL.value
-    assert by_requirement["REQ-001"]["actual"] == 48_000_000
-    assert by_requirement["REQ-001"]["expected"] == 50_000_000
-    assert by_requirement["REQ-001"]["finding_ids"]
-    assert by_requirement["REQ-002"]["status"] == ComplianceStatus.PASS.value
-    assert by_requirement["REQ-003"]["status"] == ComplianceStatus.PASS.value
-    assert by_requirement["REQ-004"]["status"] == ComplianceStatus.PASS.value
+    assert by_requirement["REQ-TND-001-001"]["status"] == ComplianceStatus.FAIL.value
+    assert by_requirement["REQ-TND-001-001"]["actual"] == 48_000_000
+    assert by_requirement["REQ-TND-001-001"]["expected"] == 50_000_000
+    assert by_requirement["REQ-TND-001-001"]["finding_ids"]
+    assert by_requirement["REQ-TND-001-002"]["status"] == ComplianceStatus.PASS.value
+    assert by_requirement["REQ-TND-001-003"]["status"] == ComplianceStatus.PASS.value
+    assert by_requirement["REQ-TND-001-004"]["status"] == ComplianceStatus.PASS.value
 
-    turnover_chain = report["evidence_chains"][by_requirement["REQ-001"]["id"]]
-    assert turnover_chain["requirement"]["id"] == "REQ-001"
+    turnover_chain = report["evidence_chains"][by_requirement["REQ-TND-001-001"]["id"]]
+    assert turnover_chain["requirement"]["id"] == "REQ-TND-001-001"
     assert turnover_chain["rule"]["id"] == "RULE-TURNOVER-GTE"
     assert turnover_chain["evidence"]
     assert any(
@@ -54,15 +54,16 @@ def test_tender_b_reuses_same_bidder_evidence_and_changes_only_tender_result():
     )
 
     results = {item["requirement_id"]: item for item in report["compliance_results"]}
-    assert len(results) == 4
-    assert results["REQ-005"]["status"] == ComplianceStatus.PASS.value
-    assert results["REQ-005"]["actual"] == 48_000_000
-    assert results["REQ-005"]["expected"] == 30_000_000
-    assert results["REQ-006"]["status"] == ComplianceStatus.PASS.value
-    assert results["REQ-007"]["status"] == ComplianceStatus.PASS.value
-    assert results["REQ-008"]["status"] == ComplianceStatus.PASS.value
+    assert len(results) == 18
+    assert results["REQ-TND-002-001"]["status"] == ComplianceStatus.PASS.value
+    assert results["REQ-TND-002-001"]["actual"] == 48_000_000
+    assert results["REQ-TND-002-001"]["expected"] == 45_000_000
+    assert results["REQ-TND-002-002"]["status"] == ComplianceStatus.PASS.value
+    assert results["REQ-TND-002-003"]["status"] == ComplianceStatus.PASS.value
+    assert results["REQ-TND-002-004"]["status"] == ComplianceStatus.PASS.value
+    assert results["REQ-TND-002-005"]["status"] == ComplianceStatus.PASS.value
 
-    assert report["summary"] == {"PASS": 4}
+    assert report["summary"] == {"PASS": 5, "MANUAL_REVIEW": 13}
 
 
 def test_passport_mock_verifications_are_visible_in_workflow_report():
@@ -113,7 +114,7 @@ def test_audit_history_contains_one_event_per_evaluated_requirement():
         evaluated_at=RUN_AT,
     )
     history = service.get_audit_history("TND-001", "BIDDER-001")
-    assert len(history) == 4
+    assert len(history) == 18
     assert all(event.action == "COMPLIANCE_EVALUATED" for event in history)
 
 
@@ -138,4 +139,4 @@ def test_repeated_workflow_run_does_not_duplicate_evidence_or_verifications():
     ]
     assert len(service.evidence_engine.get_all_evidence()) == evidence_count
     assert len(service.evidence_engine.get_all_verifications()) == verification_count
-    assert second["summary"] == {"PASS": 4}
+    assert second["summary"] == {"PASS": 5, "MANUAL_REVIEW": 13}

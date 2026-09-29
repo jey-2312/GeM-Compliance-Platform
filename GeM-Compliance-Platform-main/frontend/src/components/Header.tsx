@@ -54,7 +54,7 @@ export const Header: React.FC<HeaderProps> = ({ currentTab, onTabChange, activeT
 
       <div className="case-control">
         {activeTender ? (
-          <div className="current-case"><span className="control-caption">CURRENT CASE</span><strong>{activeTender.reference_no} · {activeTender.title.replace('Sample CPCL Procurement Tender - ', '')}</strong></div>
+          <div className="current-case"><span className="control-caption">CURRENT CASE</span><strong>{activeTender.reference_no} · {activeTender.title}</strong></div>
         ) : <span className="control-caption">NO CASE OPEN</span>}
         <button type="button" className="new-review-button" onClick={onNewReview}><Plus size={14} /> New review</button>
       </div>

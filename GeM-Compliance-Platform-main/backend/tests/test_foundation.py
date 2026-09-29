@@ -16,12 +16,12 @@ def test_all_seed_fixtures_validate():
     loaded = load_all_fixtures(FIXTURES)
 
     assert len(loaded["tenders.json"]) == 2
-    assert len(loaded["requirements.json"]) == 8
+    assert len(loaded["requirements.json"]) == 36
     assert len(loaded["bidders.json"]) == 1
-    assert len(loaded["documents.json"]) == 5
-    assert len(loaded["evidence.json"]) == 5
+    assert len(loaded["documents.json"]) == 6
+    assert len(loaded["evidence.json"]) == 6
     assert len(loaded["verifications.json"]) == 4
-    assert len(loaded["rules.json"]) == 4
+    assert len(loaded["rules.json"]) == 6
 
 
 def test_tender_a_turnover_fails():
@@ -30,7 +30,7 @@ def test_tender_a_turnover_fails():
     evidence = loaded["evidence.json"]
     verifications = loaded["verifications.json"]
 
-    req = next(r for r in requirements if r.id == "REQ-001")
+    req = next(r for r in requirements if r.id == "REQ-TND-001-001")
 
     result = evaluate_turnover_requirement(
         req,
@@ -55,7 +55,7 @@ def test_tender_b_turnover_passes():
     evidence = loaded["evidence.json"]
     verifications = loaded["verifications.json"]
 
-    req = next(r for r in requirements if r.id == "REQ-005")
+    req = next(r for r in requirements if r.id == "REQ-TND-002-001")
 
     result = evaluate_turnover_requirement(
         req,
@@ -67,7 +67,7 @@ def test_tender_b_turnover_passes():
 
     assert result.status is ComplianceStatus.PASS
     assert result.actual == 48000000
-    assert result.expected == 30000000
+    assert result.expected == 45000000
 
 
 def test_missing_verified_turnover_is_unverifiable():
@@ -102,7 +102,7 @@ def test_missing_verified_turnover_is_unverifiable():
 
 def test_self_declared_turnover_does_not_override_verified_turnover():
     loaded = load_all_fixtures(FIXTURES)
-    req = next(r for r in loaded["requirements.json"] if r.id == "REQ-001")
+    req = next(r for r in loaded["requirements.json"] if r.id == "REQ-TND-001-001")
 
     result = evaluate_turnover_requirement(
         req,

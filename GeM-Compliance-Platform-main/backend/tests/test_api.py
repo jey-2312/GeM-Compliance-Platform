@@ -33,7 +33,7 @@ def test_health_and_discovery_endpoints():
 
     requirements = client.get("/api/v1/tenders/TND-001/requirements")
     assert requirements.status_code == 200
-    assert len(requirements.json()) == 4
+    assert len(requirements.json()) == 18
 
     bidder = client.get("/api/v1/bidders/BIDDER-001")
     assert bidder.status_code == 200
@@ -55,13 +55,13 @@ def test_compliance_evaluation_api_returns_complete_workflow():
     assert response.status_code == 200
     payload = response.json()
     assert payload["summary"]["FAIL"] == 1
-    assert payload["summary"]["PASS"] == 3
+    assert payload["summary"] == {"FAIL": 1, "PASS": 4, "MANUAL_REVIEW": 13}
     assert payload["compliance_results"]
     assert payload["evidence_chains"]
     assert payload["audit_events"]
 
     turnover = next(
-        item for item in payload["compliance_results"] if item["requirement_id"] == "REQ-001"
+        item for item in payload["compliance_results"] if item["requirement_id"] == "REQ-TND-001-001"
     )
     assert turnover["rule_id"] == "RULE-TURNOVER-GTE"
     assert turnover["actual"] == 48_000_000
@@ -70,7 +70,7 @@ def test_compliance_evaluation_api_returns_complete_workflow():
     result = client.get(f"/api/v1/compliance/results/{result_id}")
     assert result.status_code == 200
     assert result.json()["result"]["id"] == result_id
-    assert result.json()["evidence_chain"]["requirement"]["id"] == "REQ-001"
+    assert result.json()["evidence_chain"]["requirement"]["id"] == "REQ-TND-001-001"
 
 
 def test_evidence_and_chain_api_after_evaluation():
@@ -160,14 +160,14 @@ def test_passport_verification_extraction_and_officer_audit_routes():
     extraction = client.post('/api/v1/tenders/TND-001/extract')
     assert extraction.status_code == 200
     assert extraction.json()['ai_used'] is False
-    assert len(extraction.json()['requirements']) == 4
-    assert extraction.json()['requirements'][0]['source_page'] == 7
+    assert len(extraction.json()['requirements']) == 18
+    assert extraction.json()['requirements'][0]['source_page'] == 6
 
     eval_response = client.post(
         '/api/v1/compliance/evaluate',
         json={'tender_id': 'TND-001', 'bidder_id': 'BIDDER-001', 'evaluated_at': RUN_AT.isoformat()},
     )
-    turnover = next(item for item in eval_response.json()['compliance_results'] if item['requirement_id'] == 'REQ-001')
+    turnover = next(item for item in eval_response.json()['compliance_results'] if item['requirement_id'] == 'REQ-TND-001-001')
 
     commit = client.post(
         '/api/v1/audit/commit',
@@ -193,7 +193,7 @@ def test_officer_ai_endpoints_are_factual_without_llm_key(monkeypatch):
         '/api/v1/compliance/evaluate',
         json={'tender_id': 'TND-001', 'bidder_id': 'BIDDER-001'},
     ).json()
-    turnover = next(item for item in report['compliance_results'] if item['requirement_id'] == 'REQ-001')
+    turnover = next(item for item in report['compliance_results'] if item['requirement_id'] == 'REQ-TND-001-001')
 
     explanation = client.post('/api/v1/ai/explain-contradiction', json={'result_id': turnover['id']})
     assert explanation.status_code == 200
@@ -204,7 +204,7 @@ def test_officer_ai_endpoints_are_factual_without_llm_key(monkeypatch):
     draft = client.post(
         '/api/v1/ai/draft-clarification',
         json={
-            'tender_ref': 'CPCL/PROC/2026/001',
+            'tender_ref': 'NPIA/EDU-ICT/2026/014',
             'bidder_name': 'ABC Technologies Pvt Ltd',
             'variance': '₹1.40 Crore',
         },

@@ -32,7 +32,7 @@ def main() -> None:
         turnover_result = next(
             item
             for item in report["compliance_results"]
-            if item["requirement_id"] in {"REQ-001", "REQ-005"}
+            if item["requirement_id"] == f"REQ-{tender_id}-001"
         )
         chain = report["evidence_chains"][turnover_result["id"]]
         print("  Turnover evidence chain:")

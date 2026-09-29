@@ -38,7 +38,7 @@ The automated integration test uses the canonical fixtures in `data/fixtures`.
 For `BIDDER-001`:
 
 - Tender A: turnover ₹4.8 Cr vs ₹5 Cr → `FAIL`.
-- Tender B: turnover ₹4.8 Cr vs ₹3 Cr → `PASS`.
+- Tender B: turnover ₹4.8 Cr vs ₹4.5 Cr → `PASS`.
 - GST, PAN, and Udyam are checked through the existing mock verification connectors.
 - The ₹6.2 Cr self-declaration remains separate evidence and produces a discrepancy finding against the audited ₹4.8 Cr value.
 

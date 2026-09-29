@@ -318,11 +318,17 @@ If the system cannot establish compliance, it should not automatically convert u
 ```json
 {
   "id": "TND-001",
-  "title": "Sample CPCL Procurement Tender",
-  "reference_no": "CPCL/PROC/2026/001",
-  "closing_date": "2026-09-30",
+  "title": "Supply, Installation, Integration and Comprehensive Maintenance of Intelligent Learning Infrastructure for Government Residential Schools",
+  "reference_no": "NPIA/EDU-ICT/2026/014",
+  "closing_date": "2026-10-30",
   "documents": ["DOC-TENDER-001"],
-  "requirements": ["REQ-001", "REQ-002", "REQ-003", "REQ-004"],
+  "requirements": [
+    "REQ-TND-001-001", "REQ-TND-001-002", "REQ-TND-001-003", "REQ-TND-001-004",
+    "REQ-TND-001-005", "REQ-TND-001-006", "REQ-TND-001-007", "REQ-TND-001-008",
+    "REQ-TND-001-009", "REQ-TND-001-010", "REQ-TND-001-011", "REQ-TND-001-012",
+    "REQ-TND-001-013", "REQ-TND-001-014", "REQ-TND-001-015", "REQ-TND-001-016",
+    "REQ-TND-001-017", "REQ-TND-001-018"
+  ],
   "status": "READY"
 }
 ```
@@ -331,7 +337,7 @@ If the system cannot establish compliance, it should not automatically convert u
 
 ```json
 {
-  "id": "REQ-001",
+  "id": "REQ-TND-001-001",
   "tender_id": "TND-001",
   "type": "TURNOVER",
   "title": "Minimum Average Annual Turnover",
@@ -341,7 +347,7 @@ If the system cannot establish compliance, it should not automatically convert u
   "unit": "INR",
   "mandatory": true,
   "source_document_id": "DOC-TENDER-001",
-  "source_page": 7,
+  "source_page": 6,
   "confidence": 0.96,
   "rule_id": "RULE-TURNOVER-GTE"
 }
@@ -361,7 +367,9 @@ If the system cannot establish compliance, it should not automatically convert u
     "EVD-001",
     "EVD-002",
     "EVD-003",
-    "EVD-004"
+    "EVD-004",
+    "EVD-011",
+    "EVD-012"
   ]
 }
 ```
@@ -405,7 +413,7 @@ If the system cannot establish compliance, it should not automatically convert u
 {
   "id": "EVD-012",
   "bidder_id": "BIDDER-001",
-  "requirement_id": "REQ-001",
+  "requirement_id": "REQ-TND-001-001",
   "document_id": "DOC-001",
   "page": 12,
   "evidence_type": "DOCUMENT_EXTRACT",
@@ -441,12 +449,12 @@ If the system cannot establish compliance, it should not automatically convert u
   "id": "CMP-001",
   "tender_id": "TND-001",
   "bidder_id": "BIDDER-001",
-  "requirement_id": "REQ-001",
+  "requirement_id": "REQ-TND-001-001",
   "status": "FAIL",
   "rule_id": "RULE-TURNOVER-GTE",
   "expected": 50000000,
   "actual": 48000000,
-  "evidence_ids": ["EVD-012", "EVD-013"],
+  "evidence_ids": ["EVD-012"],
   "finding_ids": ["FND-001"],
   "explanation": "Verified turnover of INR 4.8 crore is below the tender minimum of INR 5 crore.",
   "evaluated_at": "2026-09-17T09:12:00+05:30"
@@ -463,7 +471,7 @@ If the system cannot establish compliance, it should not automatically convert u
   "action": "COMPLIANCE_EVALUATED",
   "tender_id": "TND-001",
   "bidder_id": "BIDDER-001",
-  "requirement_id": "REQ-001",
+  "requirement_id": "REQ-TND-001-001",
   "rule_id": "RULE-TURNOVER-GTE",
   "result_id": "CMP-001",
   "details": "Rule evaluated against verified evidence."
@@ -598,7 +606,7 @@ Tender A:
 Minimum turnover = ₹5 Cr
 
 Tender B:
-Minimum turnover = ₹3 Cr
+Minimum turnover = ₹4.5 Cr
 ```
 
 Expected:
@@ -610,7 +618,7 @@ FALSE
 → FAIL
 
 Tender B:
-₹4.8 Cr >= ₹3 Cr
+₹4.8 Cr >= ₹4.5 Cr
 TRUE
 → PASS
 ```
@@ -1054,7 +1062,7 @@ FAIL
 
 ```text
 actual = ₹4.8 Cr
-threshold = ₹3 Cr
+threshold = ₹4.5 Cr
 
 expected:
 PASS
@@ -1142,7 +1150,7 @@ Tender A:
 Minimum turnover = ₹5 Cr
 
 Tender B:
-Minimum turnover = ₹3 Cr
+Minimum turnover = ₹4.5 Cr
 ```
 
 ---
@@ -1261,7 +1269,7 @@ The final prototype should tell one simple story.
 11. Open Tender B
         ↓
 12. Requirement:
-    Turnover ≥ ₹3 Cr
+    Turnover ≥ ₹4.5 Cr
         ↓
 13. Same bidder
         ↓

@@ -3,13 +3,17 @@
     "id": "CMP-001",
     "tender_id": "TND-001",
     "bidder_id": "BIDDER-001",
-    "requirement_id": "REQ-001",
+    "requirement_id": "REQ-TND-001-001",
     "status": "FAIL",
     "rule_id": "RULE-TURNOVER-GTE",
     "expected": 50000000,
     "actual": 48000000,
-    "evidence_ids": ["EVD-012"],
-    "finding_ids": ["FND-001"],
+    "evidence_ids": [
+      "EVD-012"
+    ],
+    "finding_ids": [
+      "FND-001"
+    ],
     "explanation": "Verified turnover of INR 48000000 is below the tender minimum of INR 50000000.",
     "evaluated_at": "2026-09-17T09:12:00+05:30"
   },
@@ -17,14 +21,18 @@
     "id": "CMP-002",
     "tender_id": "TND-002",
     "bidder_id": "BIDDER-001",
-    "requirement_id": "REQ-005",
+    "requirement_id": "REQ-TND-002-001",
     "status": "PASS",
     "rule_id": "RULE-TURNOVER-GTE",
-    "expected": 30000000,
+    "expected": 45000000,
     "actual": 48000000,
-    "evidence_ids": ["EVD-012"],
-    "finding_ids": ["FND-001"],
-    "explanation": "Verified turnover of INR 48000000 meets the tender minimum of INR 30000000.",
+    "evidence_ids": [
+      "EVD-012"
+    ],
+    "finding_ids": [
+      "FND-001"
+    ],
+    "explanation": "Verified turnover of INR 48000000 meets the tender minimum of INR 45000000.",
     "evaluated_at": "2026-09-17T09:13:00+05:30"
   }
 ]

@@ -50,26 +50,26 @@ def _evaluate(requirement_id: str, field_name: str, value: str, *, status: str =
 
 
 def test_gst_active_passes():
-    result = _evaluate("REQ-002", "gst_status", "ACTIVE")
+    result = _evaluate("REQ-TND-001-002", "gst_status", "ACTIVE")
     assert result.status is ComplianceStatus.PASS
     assert result.actual == "ACTIVE"
     assert result.expected == "ACTIVE"
 
 
 def test_pan_invalid_value_fails():
-    result = _evaluate("REQ-003", "pan_status", "INVALID")
+    result = _evaluate("REQ-TND-001-003", "pan_status", "INVALID")
     assert result.status is ComplianceStatus.FAIL
     assert result.actual == "INVALID"
     assert result.expected == "VALID"
 
 
 def test_udyam_missing_verification_is_unverifiable():
-    result = _evaluate("REQ-004", "udyam_status", "ACTIVE", status="NOT_FOUND")
+    result = _evaluate("REQ-TND-001-004", "udyam_status", "ACTIVE", status="NOT_FOUND")
     assert result.status is ComplianceStatus.UNVERIFIABLE
     assert result.actual is None
 
 
 def test_status_rule_does_not_accept_unverified_document_claim_as_verified():
-    result = _evaluate("REQ-002", "gst_status", "ACTIVE", status="UNVERIFIED")
+    result = _evaluate("REQ-TND-001-002", "gst_status", "ACTIVE", status="UNVERIFIED")
     assert result.status is ComplianceStatus.UNVERIFIABLE
     assert result.evidence_ids == []
