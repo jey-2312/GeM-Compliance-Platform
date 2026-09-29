@@ -1,0 +1,18 @@
+CPCL/PROC/2026/001 — Sample CPCL Procurement Tender (Tender A)
+
+Eligibility Criteria:
+
+1. Minimum Average Annual Turnover: The bidder must have an average annual
+   turnover of at least INR 5 Crore over the last three financial years,
+   supported by audited financial statements.
+
+2. GST Registration: The bidder must hold a valid and active GST
+   registration (GSTIN).
+
+3. PAN: The bidder must possess a valid Permanent Account Number (PAN).
+
+4. Udyam Registration: The bidder must have an active Udyam (MSME)
+   registration.
+
+5. OEM Authorization: The bidder must submit a valid Original Equipment
+   Manufacturer (OEM) authorization letter for the goods being supplied.

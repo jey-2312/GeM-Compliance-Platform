@@ -1,0 +1,57 @@
+[
+  {
+    "id": "DOC-001",
+    "bidder_id": "BIDDER-001",
+    "name": "Audited_Financial_Statement.pdf",
+    "document_type": "AUDITED_FINANCIALS",
+    "path_or_uri": "data/bidders/abc/Audited_Financial_Statement.pdf",
+    "page_count": 14,
+    "text_extraction_method": "PYMUPDF",
+    "ocr_used": false,
+    "uploaded_at": "2026-09-17T09:00:00+05:30"
+  },
+  {
+    "id": "DOC-002",
+    "bidder_id": "BIDDER-001",
+    "name": "Self_Declaration.pdf",
+    "document_type": "SELF_DECLARATION",
+    "path_or_uri": "data/bidders/abc/Self_Declaration.pdf",
+    "page_count": 4,
+    "text_extraction_method": "PYMUPDF",
+    "ocr_used": false,
+    "uploaded_at": "2026-09-17T09:00:00+05:30"
+  },
+  {
+    "id": "DOC-003",
+    "bidder_id": "BIDDER-001",
+    "name": "GST_Certificate.pdf",
+    "document_type": "GST_CERTIFICATE",
+    "path_or_uri": "data/bidders/abc/GST_Certificate.pdf",
+    "page_count": 2,
+    "text_extraction_method": "PYMUPDF",
+    "ocr_used": false,
+    "uploaded_at": "2026-09-17T09:00:00+05:30"
+  },
+  {
+    "id": "DOC-004",
+    "bidder_id": "BIDDER-001",
+    "name": "PAN_Card.pdf",
+    "document_type": "PAN_DOCUMENT",
+    "path_or_uri": "data/bidders/abc/PAN_Card.pdf",
+    "page_count": 1,
+    "text_extraction_method": "PYMUPDF",
+    "ocr_used": false,
+    "uploaded_at": "2026-09-17T09:00:00+05:30"
+  },
+  {
+    "id": "DOC-005",
+    "bidder_id": "BIDDER-001",
+    "name": "Udyam_Registration.pdf",
+    "document_type": "UDYAM_REGISTRATION",
+    "path_or_uri": "data/bidders/abc/Udyam_Registration.pdf",
+    "page_count": 1,
+    "text_extraction_method": "PYMUPDF",
+    "ocr_used": false,
+    "uploaded_at": "2026-09-17T09:00:00+05:30"
+  }
+]

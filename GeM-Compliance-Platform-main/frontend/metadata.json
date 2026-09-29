@@ -1,0 +1,6 @@
+{
+  "name": "Saanron",
+  "description": "AI-powered integrated bid compliance verification and forensic procurement audit platform for GeM tender analysis.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "id": "AUD-001",
+    "timestamp": "2026-09-17T09:12:00+05:30",
+    "actor_type": "SYSTEM",
+    "action": "COMPLIANCE_EVALUATED",
+    "tender_id": "TND-001",
+    "bidder_id": "BIDDER-001",
+    "requirement_id": "REQ-001",
+    "rule_id": "RULE-TURNOVER-GTE",
+    "result_id": "CMP-001",
+    "details": "Rule evaluated against verified evidence."
+  },
+  {
+    "id": "AUD-002",
+    "timestamp": "2026-09-17T09:13:00+05:30",
+    "actor_type": "SYSTEM",
+    "action": "COMPLIANCE_EVALUATED",
+    "tender_id": "TND-002",
+    "bidder_id": "BIDDER-001",
+    "requirement_id": "REQ-005",
+    "rule_id": "RULE-TURNOVER-GTE",
+    "result_id": "CMP-002",
+    "details": "Rule evaluated against verified evidence."
+  }
+]

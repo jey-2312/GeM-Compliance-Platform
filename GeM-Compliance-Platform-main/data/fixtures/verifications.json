@@ -1,0 +1,42 @@
+[
+  {
+    "id": "VER-001",
+    "evidence_id": "EVD-012",
+    "source_type": "MOCK_GOVERNMENT_SOURCE",
+    "source_name": "Mock Financial Verification",
+    "checked_at": "2026-09-17T09:10:00+05:30",
+    "status": "VERIFIED",
+    "verified_value": 48000000,
+    "details": "Mock source confirms audited turnover value."
+  },
+  {
+    "id": "VER-002",
+    "evidence_id": "EVD-001",
+    "source_type": "MOCK_GOVERNMENT_SOURCE",
+    "source_name": "Mock GST Verification",
+    "checked_at": "2026-09-17T09:10:00+05:30",
+    "status": "VERIFIED",
+    "verified_value": "ACTIVE",
+    "details": "Mock source returns GST status ACTIVE."
+  },
+  {
+    "id": "VER-003",
+    "evidence_id": "EVD-002",
+    "source_type": "MOCK_GOVERNMENT_SOURCE",
+    "source_name": "Mock PAN Verification",
+    "checked_at": "2026-09-17T09:10:00+05:30",
+    "status": "VERIFIED",
+    "verified_value": "VALID",
+    "details": "Mock source returns PAN status VALID."
+  },
+  {
+    "id": "VER-004",
+    "evidence_id": "EVD-003",
+    "source_type": "MOCK_GOVERNMENT_SOURCE",
+    "source_name": "Mock Udyam Verification",
+    "checked_at": "2026-09-17T09:10:00+05:30",
+    "status": "VERIFIED",
+    "verified_value": "ACTIVE",
+    "details": "Mock source returns Udyam status ACTIVE."
+  }
+]

@@ -1,0 +1,62 @@
+[
+  {
+    "id": "REQ-TND-002-001",
+    "tender_id": "TND-002",
+    "type": "TURNOVER",
+    "title": "Minimum Average Annual Turnover",
+    "description": "The bidder must have an average annual turnover of at least INR 3 Crore over the last three financial years, supported by audited financial statements.",
+    "operator": "GREATER_THAN_OR_EQUAL",
+    "threshold": 30000000,
+    "unit": "INR",
+    "mandatory": true,
+    "source_document_id": "DOC-TENDER-002",
+    "source_page": 1,
+    "confidence": 0.96,
+    "rule_id": "RULE-TURNOVER-GTE"
+  },
+  {
+    "id": "REQ-TND-002-002",
+    "tender_id": "TND-002",
+    "type": "GST",
+    "title": "GST Registration",
+    "description": "The bidder must hold a valid and active GST registration (GSTIN).",
+    "operator": "STATUS_ACTIVE",
+    "threshold": null,
+    "unit": null,
+    "mandatory": true,
+    "source_document_id": "DOC-TENDER-002",
+    "source_page": 1,
+    "confidence": 0.96,
+    "rule_id": "RULE-GST-ACTIVE"
+  },
+  {
+    "id": "REQ-TND-002-003",
+    "tender_id": "TND-002",
+    "type": "PAN",
+    "title": "PAN",
+    "description": "The bidder must possess a valid Permanent Account Number (PAN).",
+    "operator": "STATUS_ACTIVE",
+    "threshold": null,
+    "unit": null,
+    "mandatory": true,
+    "source_document_id": "DOC-TENDER-002",
+    "source_page": 1,
+    "confidence": 0.96,
+    "rule_id": "RULE-PAN-VALID"
+  },
+  {
+    "id": "REQ-TND-002-004",
+    "tender_id": "TND-002",
+    "type": "UDYAM",
+    "title": "Udyam Registration",
+    "description": "The bidder must have an active Udyam (MSME) registration.",
+    "operator": "STATUS_ACTIVE",
+    "threshold": null,
+    "unit": null,
+    "mandatory": true,
+    "source_document_id": "DOC-TENDER-002",
+    "source_page": 1,
+    "confidence": 0.96,
+    "rule_id": "RULE-UDYAM-ACTIVE"
+  }
+]

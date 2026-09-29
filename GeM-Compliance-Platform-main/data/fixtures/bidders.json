@@ -1,0 +1,17 @@
+[
+  {
+    "id": "BIDDER-001",
+    "legal_name": "ABC Technologies Pvt Ltd",
+    "pan": "ABCDE1234F",
+    "gstin": "29ABCDE1234F1Z5",
+    "udyam": "UDYAM-KL-00-0000000",
+    "address": "Sample Address",
+    "evidence_ids": [
+      "EVD-001",
+      "EVD-002",
+      "EVD-003",
+      "EVD-011",
+      "EVD-012"
+    ]
+  }
+]

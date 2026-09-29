@@ -1,0 +1,21 @@
+[project]
+name = "gem-compliance-backend"
+version = "0.1.0"
+description = "Backend foundation for the SIH 26100 GeM compliance prototype"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.7,<3",
+    "fastapi>=0.115,<1",
+    "uvicorn>=0.34,<1",
+    "httpx>=0.27,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8,<9",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"

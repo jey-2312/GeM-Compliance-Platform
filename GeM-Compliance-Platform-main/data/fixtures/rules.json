@@ -1,0 +1,38 @@
+[
+  {
+    "id": "RULE-TURNOVER-GTE",
+    "type": "NUMERIC_COMPARISON",
+    "field": "average_annual_turnover",
+    "operator": "GREATER_THAN_OR_EQUAL",
+    "threshold_source": "requirement.threshold",
+    "mandatory": true,
+    "version": "1.0"
+  },
+  {
+    "id": "RULE-GST-ACTIVE",
+    "type": "STATUS_COMPARISON",
+    "field": "gst_status",
+    "operator": "STATUS_ACTIVE",
+    "threshold_source": "required_status:ACTIVE",
+    "mandatory": true,
+    "version": "1.0"
+  },
+  {
+    "id": "RULE-PAN-VALID",
+    "type": "STATUS_COMPARISON",
+    "field": "pan_status",
+    "operator": "STATUS_ACTIVE",
+    "threshold_source": "required_status:VALID",
+    "mandatory": true,
+    "version": "1.0"
+  },
+  {
+    "id": "RULE-UDYAM-ACTIVE",
+    "type": "STATUS_COMPARISON",
+    "field": "udyam_status",
+    "operator": "STATUS_ACTIVE",
+    "threshold_source": "required_status:ACTIVE",
+    "mandatory": true,
+    "version": "1.0"
+  }
+]

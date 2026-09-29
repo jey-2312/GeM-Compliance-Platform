@@ -1,0 +1,20 @@
+[
+  {
+    "id": "TND-001",
+    "title": "Sample CPCL Procurement Tender - Tender A",
+    "reference_no": "CPCL/PROC/2026/001",
+    "closing_date": "2026-09-30",
+    "documents": ["DOC-TENDER-001"],
+    "requirements": ["REQ-001", "REQ-002", "REQ-003", "REQ-004"],
+    "status": "READY"
+  },
+  {
+    "id": "TND-002",
+    "title": "Sample CPCL Procurement Tender - Tender B",
+    "reference_no": "CPCL/PROC/2026/002",
+    "closing_date": "2026-10-15",
+    "documents": ["DOC-TENDER-002"],
+    "requirements": ["REQ-005", "REQ-006", "REQ-007", "REQ-008"],
+    "status": "READY"
+  }
+]

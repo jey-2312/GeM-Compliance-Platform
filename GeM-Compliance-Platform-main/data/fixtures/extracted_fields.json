@@ -1,0 +1,26 @@
+[
+  {
+    "id": "FIELD-001",
+    "document_id": "DOC-001",
+    "field_name": "average_annual_turnover",
+    "value": 48000000,
+    "unit": "INR",
+    "normalized_value": 48000000,
+    "raw_text": "Average annual turnover: Rs. 4.8 Crores",
+    "page": 12,
+    "confidence": 0.98,
+    "extraction_method": "AI"
+  },
+  {
+    "id": "FIELD-002",
+    "document_id": "DOC-002",
+    "field_name": "average_annual_turnover",
+    "value": 62000000,
+    "unit": "INR",
+    "normalized_value": 62000000,
+    "raw_text": "Average annual turnover: Rs. 6.2 Crores",
+    "page": 2,
+    "confidence": 0.98,
+    "extraction_method": "AI"
+  }
+]

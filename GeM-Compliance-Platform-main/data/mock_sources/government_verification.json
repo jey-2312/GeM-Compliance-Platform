@@ -1,0 +1,30 @@
+{
+  "gst": {
+    "29ABCDE1234F1Z5": {
+      "status": "VERIFIED",
+      "verified_value": "ACTIVE",
+      "details": "Mock source returns GST status ACTIVE."
+    }
+  },
+  "pan": {
+    "ABCDE1234F": {
+      "status": "VERIFIED",
+      "verified_value": "VALID",
+      "details": "Mock source returns PAN status VALID."
+    }
+  },
+  "udyam": {
+    "UDYAM-KL-00-0000000": {
+      "status": "VERIFIED",
+      "verified_value": "ACTIVE",
+      "details": "Mock source returns Udyam status ACTIVE."
+    }
+  },
+  "financial": {
+    "BIDDER-001": {
+      "status": "VERIFIED",
+      "verified_value": 48000000,
+      "details": "Mock source confirms audited turnover value of INR 4.8 crore."
+    }
+  }
+}
