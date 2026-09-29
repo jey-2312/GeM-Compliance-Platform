@@ -27,3 +27,4 @@ Thumbs.db
 build/
 dist/
 *.log
+node_modules/
