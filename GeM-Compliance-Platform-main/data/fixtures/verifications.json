@@ -38,5 +38,35 @@
     "status": "VERIFIED",
     "verified_value": "ACTIVE",
     "details": "Mock source returns Udyam status ACTIVE."
+  },
+  {
+    "id": "VER-005",
+    "evidence_id": "EVD-013",
+    "source_type": "MOCK_DOCUMENT_VERIFICATION",
+    "source_name": "Mock Local Content Verification",
+    "checked_at": "2026-09-17T09:10:00+05:30",
+    "status": "VERIFIED",
+    "verified_value": 42,
+    "details": "Mock verification confirms local content of 42%."
+  },
+  {
+    "id": "VER-006",
+    "evidence_id": "EVD-015",
+    "source_type": "MOCK_DOCUMENT_VERIFICATION",
+    "source_name": "Mock Local Content Verification",
+    "checked_at": "2026-09-17T09:10:00+05:30",
+    "status": "VERIFIED",
+    "verified_value": 55,
+    "details": "Mock verification confirms local content of 55%."
+  },
+  {
+    "id": "VER-007",
+    "evidence_id": "EVD-017",
+    "source_type": "MOCK_DOCUMENT_VERIFICATION",
+    "source_name": "Mock Certificate Verification",
+    "checked_at": "2026-09-17T09:10:00+05:30",
+    "status": "VERIFIED",
+    "verified_value": "2026-12-15",
+    "details": "Mock certificate verification confirms validity through 2026-12-15."
   }
 ]

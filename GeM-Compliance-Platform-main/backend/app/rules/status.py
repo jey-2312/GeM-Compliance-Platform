@@ -1,7 +1,6 @@
 """Deterministic status-rule evaluators for the prototype.
 
-These evaluators cover the status checks already present in the canonical
-prototype requirements: GST ACTIVE, PAN VALID, Udyam ACTIVE, and OEM authorization ACTIVE.
+These evaluators cover deterministic status checks for GST, PAN, Udyam, OEM authorization, and debarment clearance.
 The evaluator consumes verified evidence only and never calls an LLM.
 """
 
@@ -24,6 +23,7 @@ STATUS_RULES: dict[str, dict[str, str]] = {
     "RULE-PAN-VALID": {"field": "pan_status", "expected": "VALID"},
     "RULE-UDYAM-ACTIVE": {"field": "udyam_status", "expected": "ACTIVE"},
     "RULE-OEM-AUTHORIZATION-ACTIVE": {"field": "oem_authorization_status", "expected": "ACTIVE"},
+    "RULE-DEBARMENT-CLEAR": {"field": "debarment_status", "expected": "NOT_DEBARRED"},
 }
 
 

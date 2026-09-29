@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Tender, TenderId, TenderRequirement, ComplianceMatrixItem, Bidder, BackendEvaluationReport } from './types';
 import { DemoTab } from './types/ui';
-import { apiClient, TenderIntakeResponse, toUiRequirement } from './services/api';
+import { apiClient, TenderIntakeResponse, toUiRequirement, toComplianceMatrixItems } from './services/api';
 import { Header } from './components/Header';
 import { OverviewView } from './components/OverviewView';
 import { ComplianceMatrixView } from './components/ComplianceMatrixView';
@@ -12,6 +12,9 @@ import { EvidenceDrawer } from './components/EvidenceDrawer';
 import { UploadDocumentModal } from './components/UploadDocumentModal';
 import { StartReviewView } from './components/StartReviewView';
 import { Toast } from './components/Toast';
+import { GuidedDemoBar } from './components/GuidedDemoBar';
+import { EvidenceGraphView } from './components/EvidenceGraphView';
+import { ContradictionRadarView } from './components/ContradictionRadarView';
 
 const PROJECT_NAME = (import.meta.env.VITE_PROJECT_NAME as string | undefined)?.trim() || 'Saanron';
 
@@ -32,6 +35,7 @@ export default function App() {
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [isToastVisible, setIsToastVisible] = useState(false);
+  const [guidedStep, setGuidedStep] = useState<number | null>(null);
 
   const showToast = (message: string) => {
     setToastMessage(message);
@@ -68,6 +72,40 @@ export default function App() {
 
   const handleNewReview = () => {
     setIsUploadModalOpen(true);
+  };
+
+  const handleDemoReset = async () => {
+    try {
+      await apiClient.resetDemo();
+      setActiveTenderId(null);
+      setActiveTender(null);
+      setActiveRequirements([]);
+      setReports({});
+      setReviewedTenderIds([]);
+      setSelectedRequirement(null);
+      setSelectedEvidence(null);
+      setCurrentTab('overview');
+      setGuidedStep(null);
+      showToast('Demo restored to the seeded baseline.');
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Demo reset failed.');
+    }
+  };
+
+  const startGuidedDemo = async () => {
+    try {
+      const [tender, requirements, report] = await Promise.all([
+        apiClient.getTender('TND-001'),
+        apiClient.getTenderRequirements('TND-001'),
+        apiClient.checkCompliance('TND-001'),
+      ]);
+      setActiveTenderId('TND-001'); setActiveTender(tender); setActiveRequirements(requirements);
+      setReports((current) => ({ ...current, 'TND-001': report }));
+      setReviewedTenderIds((current) => current.includes('TND-001') ? current : [...current, 'TND-001']);
+      setCurrentTab('overview'); setGuidedStep(1); setLoadError(null);
+    } catch (error) {
+      showToast(error instanceof Error ? error.message : 'Guided demo could not start.');
+    }
   };
 
   const activeReport = activeTenderId ? reports[activeTenderId] : undefined;
@@ -108,7 +146,7 @@ export default function App() {
             <div><span className="kicker">CONNECTION ERROR</span><h1>Backend connection required</h1><p>{loadError}</p><button type="button" className="primary-action" onClick={() => window.location.reload()}>Retry connection</button></div>
           </div>
         ) : !activeTender || !activeReport ? (
-          <StartReviewView onStartReview={handleNewReview} reviewedReports={reviewedReports} onOpenTender={(report) => {
+          <StartReviewView onStartReview={handleNewReview} onStartGuidedDemo={() => void startGuidedDemo()} onDemoReset={() => void handleDemoReset()} reviewedReports={reviewedReports} onOpenTender={(report) => {
             setActiveTenderId(report.tender.id);
             setActiveTender(report.tender);
             setActiveRequirements(report.requirements.map(toUiRequirement));
@@ -133,11 +171,24 @@ export default function App() {
               />
             )}
             {currentTab === 'compliance' && <ComplianceMatrixView activeTenderId={activeTender.id} initialReport={activeReport} onReportUpdated={(report) => updateReport(activeTender.id, report)} onOpenEvidencePreview={setSelectedEvidence} onShowToast={showToast} />}
+            {currentTab === 'evidence' && <EvidenceGraphView activeTenderId={activeTender.id} initialReport={activeReport} onShowToast={showToast} />}
+            {currentTab === 'contradictions' && <ContradictionRadarView activeTenderId={activeTender.id} bidderName={bidder?.legal_name} onShowToast={showToast} onOpenEvidence={(evidenceId) => { const item = toComplianceMatrixItems(activeReport).find((candidate) => candidate.evidence_ids.includes(evidenceId)); if (item) setSelectedEvidence(item); }} />}
             {currentTab === 'passport' && <BidderPassportView activeTenderId={activeTender.id} reviewedReports={reviewedReports} onShowToast={showToast} />}
             {currentTab === 'activity' && <ActivityView activeTenderId={activeTender.id} onShowToast={showToast} />}
           </>
         )}
       </div>
+
+      {guidedStep !== null && activeReport && <GuidedDemoBar step={guidedStep} report={activeReport} onStepChange={(next) => {
+        if (next === 1) { setCurrentTab('overview'); setSelectedEvidence(null); }
+        if (next === 2) { setCurrentTab('compliance'); setSelectedEvidence(null); }
+        if (next === 3) { setCurrentTab('overview'); const item = toComplianceMatrixItems(activeReport).find((x) => x.req_id === 'REQ-TND-001-001'); if (item) setSelectedEvidence(item); }
+        if (next === 4) { setSelectedEvidence(null); setCurrentTab('evidence'); }
+        if (next === 5) { setSelectedEvidence(null); setCurrentTab('contradictions'); }
+        if (next === 6) { setSelectedEvidence(null); setCurrentTab('passport'); }
+        if (next === 7) { setSelectedEvidence(null); setCurrentTab('activity'); }
+        setGuidedStep(next);
+      }} onExit={() => { setGuidedStep(null); setSelectedEvidence(null); }} />}
 
       <footer className="app-footer"><span>{PROJECT_NAME} · prototype dossier</span><span>Backend-driven · mock sources explicit · officer retains final decision</span></footer>
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Activity, BadgeCheck, ClipboardCheck, FileCheck2, Plus } from 'lucide-react';
+import { Activity, BadgeCheck, ClipboardCheck, FileCheck2, GitBranch, Plus, Radar } from 'lucide-react';
 import { Tender } from '../types';
 import { DemoTab } from '../types/ui';
 
@@ -19,6 +19,8 @@ const PROJECT_NAME = (import.meta.env.VITE_PROJECT_NAME as string | undefined)?.
 const navItems: Array<{ id: DemoTab; label: string; icon: React.ReactNode }> = [
   { id: 'overview', label: 'Case file', icon: <FileCheck2 size={15} /> },
   { id: 'compliance', label: 'Compliance', icon: <ClipboardCheck size={15} /> },
+  { id: 'evidence', label: 'Evidence graph', icon: <GitBranch size={15} /> },
+  { id: 'contradictions', label: 'Contradiction radar', icon: <Radar size={15} /> },
   { id: 'passport', label: 'Bidder passport', icon: <BadgeCheck size={15} /> },
   { id: 'activity', label: 'Activity', icon: <Activity size={15} /> },
 ];

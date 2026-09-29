@@ -16,6 +16,7 @@ class AppState:
     verification: VerificationService
     officer_events: list[dict[str, Any]] = field(default_factory=list)
     reviewed_tenders_by_bidder: dict[str, list[str]] = field(default_factory=dict)
+    extraction_cache: dict[str, dict[str, Any]] = field(default_factory=dict)
 
 
 def build_default_state() -> AppState:

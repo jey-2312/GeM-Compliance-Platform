@@ -1,24 +1,40 @@
 import React from 'react';
-import { FilePlus2, ArrowRight, Check, History } from 'lucide-react';
+import { FilePlus2, ArrowRight, History, PlayCircle, Database, ShieldCheck, AlertTriangle, RotateCcw } from 'lucide-react';
 import { BackendEvaluationReport } from '../types';
+import { apiClient, DemoSummary } from '../services/api';
+import { useEffect, useState } from 'react';
 import { SectionLabel, StatusMark } from './DossierUI';
 
 interface Props {
   onStartReview: () => void;
+  onStartGuidedDemo: () => void;
+  onDemoReset: () => void;
   reviewedReports: BackendEvaluationReport[];
   onOpenTender: (report: BackendEvaluationReport) => void;
 }
 
-export const StartReviewView: React.FC<Props> = ({ onStartReview, reviewedReports, onOpenTender }) => (
+export const StartReviewView: React.FC<Props> = ({ onStartReview, onStartGuidedDemo, onDemoReset, reviewedReports, onOpenTender }) => {
+  const [summary, setSummary] = useState<DemoSummary | null>(null);
+  useEffect(() => { void apiClient.getDemoSummary().then(setSummary).catch(() => undefined); }, []);
+  const count = (key: keyof DemoSummary) => summary ? summary[key] : '—';
+  return (
   <main className="page-frame intake-page">
     <section className="intake-hero">
       <div className="intake-copy">
         <div className="kicker">PROCUREMENT CASE INTAKE · PS 26100</div>
         <h1>Start with the tender document.</h1>
         <p>Open a PDF, let the backend read its clauses, map the supported requirements, and populate a review case against reusable bidder evidence.</p>
-        <button type="button" className="primary-action intake-action" onClick={onStartReview}><FilePlus2 size={17} /> Start a new tender review <ArrowRight size={15} /></button>
+        <div className="landing-actions"><button type="button" className="primary-action intake-action" onClick={onStartGuidedDemo}><PlayCircle size={17} /> Start Guided Demo · 90 sec <ArrowRight size={15} /></button><button type="button" className="secondary-action intake-action" onClick={onStartReview}><FilePlus2 size={17} /> Explore Freely</button><button type="button" className="quiet-button quiet-light intake-reset" onClick={onDemoReset}><RotateCcw size={14} /> Reset Demo</button></div>
         <div className="intake-note"><span className="live-dot" /> The supplied prototype PDFs are synthetic demo documents. The review is driven by the uploaded file, not a preloaded tender selector.</div>
       </div>
+      <div className="landing-stats">
+        <div><Database size={15} /><span>Sample tenders</span><strong>{count('tenders')}</strong></div>
+        <div><ShieldCheck size={15} /><span>Requirements</span><strong>{count('requirements')}</strong></div>
+        <div><ShieldCheck size={15} /><span>Evidence checks</span><strong>{count('evidence_checks')}</strong></div>
+        <div><AlertTriangle size={15} /><span>Contradictions</span><strong>{count('contradictions')}</strong></div>
+        <div><AlertTriangle size={15} /><span>Manual review</span><strong>{count('manual_review_items')}</strong></div>
+      </div>
+
       <div className="intake-rail">
         <div className="rail-title">REVIEW PATH</div>
         {['Tender document', 'Structured requirements', 'Bidder evidence', 'Verification', 'Deterministic result'].map((label, index) => (
@@ -47,4 +63,5 @@ export const StartReviewView: React.FC<Props> = ({ onStartReview, reviewedReport
       <div className="principle-quote"><History size={16} /><span>Upload → evaluate → inspect evidence → officer decides</span></div>
     </section>
   </main>
-);
+ );
+};

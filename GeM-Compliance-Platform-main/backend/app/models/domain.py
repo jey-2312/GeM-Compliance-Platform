@@ -128,6 +128,8 @@ class ComplianceResult(DomainModel):
     finding_ids: list[str]
     explanation: str
     evaluated_at: datetime
+    gap_to_compliance: str | None = None
+    critical: bool = False
 
 
 class AuditEvent(DomainModel):

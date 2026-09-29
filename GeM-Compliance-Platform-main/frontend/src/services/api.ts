@@ -5,6 +5,7 @@ import {
   BackendEvidenceChain,
   BackendEvaluationReport,
   BackendTenderRequirement,
+  ContradictionRadarResponse,
   Bidder,
   BidderPassportResponse,
   ComplianceMatrixItem,
@@ -16,6 +17,8 @@ import {
 const configuredBaseUrl = (import.meta.env.VITE_API_BASE_URL as string | undefined)?.trim();
 const API_BASE_URL = (configuredBaseUrl || '/api/v1').replace(/\/$/, '');
 
+export interface DemoSummary { tenders: number; bidders: number; requirements: number; evidence_checks: number; contradictions: number; manual_review_items: number; }
+
 export interface TenderExtractionResponse {
   success: boolean;
   tender: Tender;
@@ -25,6 +28,7 @@ export interface TenderExtractionResponse {
   ai_used: boolean;
   mean_confidence: number | null;
   message: string;
+  fallback_used?: boolean;
 }
 
 export interface VerificationResponse {
@@ -99,7 +103,9 @@ function formatExpected(requirement: BackendTenderRequirement): string {
     if (requirement.type === 'UDYAM') return 'ACTIVE';
     return '—';
   }
-  return requirement.unit === 'INR' ? formatMoney(requirement.threshold) : String(requirement.threshold);
+  if (requirement.unit === 'INR') return formatMoney(requirement.threshold);
+  if (requirement.unit === 'PERCENT') return `${requirement.threshold}%`;
+  return String(requirement.threshold);
 }
 
 function toUiTender(raw: Tender): Tender {
@@ -136,7 +142,7 @@ function extractEvidenceForResult(
 }
 
 export function toComplianceMatrixItems(report: BackendEvaluationReport): ComplianceMatrixItem[] {
-  const reqMap = new Map(report.requirements.map((item) => [item.id, item]));
+  const reqMap = new Map<string, BackendTenderRequirement>(report.requirements.map((item) => [item.id, item]));
   return report.compliance_results.map((result) => {
     const requirement = reqMap.get(result.requirement_id);
     const evidence = extractEvidenceForResult(report, result);
@@ -145,7 +151,7 @@ export function toComplianceMatrixItems(report: BackendEvaluationReport): Compli
     const link = chain?.evidence?.find((item) => item.evidence.id === primary?.id);
     const threshold = requirement ? formatExpected(requirement) : String(result.expected ?? '—');
     const actualValue = result.actual ?? link?.evidence?.value ?? primary?.value;
-    const actualDisplay = requirement?.type === 'TURNOVER' ? formatMoney(actualValue) : String(actualValue ?? '—');
+    const actualDisplay = requirement?.unit === 'INR' || requirement?.type === 'TURNOVER' ? formatMoney(actualValue) : requirement?.unit === 'PERCENT' ? `${actualValue ?? '—'}%` : String(actualValue ?? '—');
     const forensicQuote = link?.evidence?.notes || result.explanation;
 
     return {
@@ -164,6 +170,8 @@ export function toComplianceMatrixItems(report: BackendEvaluationReport): Compli
       evidence_ids: result.evidence_ids,
       finding_ids: result.finding_ids,
       evaluated_at: result.evaluated_at,
+      gap_to_compliance: result.gap_to_compliance,
+      critical: result.critical,
     };
   });
 }
@@ -207,6 +215,14 @@ class ProcurementApiClient {
     return this.request<{ verification_mode: string }>('/health');
   }
 
+  async getDemoSummary(): Promise<DemoSummary> {
+    return this.request<DemoSummary>('/demo/summary');
+  }
+
+  async resetDemo(): Promise<{ success: boolean; message: string }> {
+    return this.request<{ success: boolean; message: string }>('/demo/reset', { method: 'POST' });
+  }
+
   async getTenders(): Promise<Tender[]> {
     const data = await this.request<Tender[]>('/tenders');
     return data.map(toUiTender);
@@ -244,6 +260,10 @@ class ProcurementApiClient {
     return this.request<{ evidence_chain: BackendEvidenceChain }>(`/evidence/${encodeURIComponent(evidenceId)}/chain`);
   }
 
+  async getContradictionRadar(tenderId: TenderId, bidderId = 'BIDDER-001'): Promise<ContradictionRadarResponse> {
+    return this.request<ContradictionRadarResponse>(`/contradictions/${encodeURIComponent(tenderId)}/${encodeURIComponent(bidderId)}`);
+  }
+
   async commitOfficerDecision(payload: CommitDecisionPayload): Promise<CommitDecisionResponse> {
     return this.request<CommitDecisionResponse>('/audit/commit', {
       method: 'POST',
@@ -259,7 +279,7 @@ class ProcurementApiClient {
   }
 
   async extractTender(tenderId: TenderId, live = false): Promise<TenderExtractionResponse> {
-    const suffix = live ? '?live=true' : '';
+    const suffix = live ? '?mode=live' : '?mode=demo';
     return this.request<TenderExtractionResponse>(`/tenders/${encodeURIComponent(tenderId)}/extract${suffix}`, {
       method: 'POST',
     });

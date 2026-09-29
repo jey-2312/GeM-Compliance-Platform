@@ -52,5 +52,32 @@
     "threshold_source": "tender_requirement",
     "mandatory": true,
     "version": "1.0"
+  },
+  {
+    "id": "RULE-LOCAL-CONTENT-GTE",
+    "type": "NUMERIC_COMPARISON",
+    "field": "local_content_percentage",
+    "operator": "GREATER_THAN_OR_EQUAL",
+    "threshold_source": "requirement.threshold",
+    "mandatory": true,
+    "version": "1.0"
+  },
+  {
+    "id": "RULE-DEBARMENT-CLEAR",
+    "type": "STATUS_COMPARISON",
+    "field": "debarment_status",
+    "operator": "STATUS_NOT_DEBARRED",
+    "threshold_source": "required_status:NOT_DEBARRED",
+    "mandatory": true,
+    "version": "1.0"
+  },
+  {
+    "id": "RULE-CERTIFICATE-VALID-AT-CLOSING",
+    "type": "TEMPORAL_COMPARISON",
+    "field": "certificate_valid_until",
+    "operator": "VALID_AT_CLOSING",
+    "threshold_source": "tender.closing_date",
+    "mandatory": true,
+    "version": "1.0"
   }
 ]

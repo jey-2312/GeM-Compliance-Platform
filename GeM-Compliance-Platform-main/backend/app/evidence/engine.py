@@ -218,6 +218,29 @@ class EvidenceEngine:
                 f"Extracted field {extracted_field_id!r} was not registered in the Evidence Engine."
             ) from exc
 
+    def get_evidence_for_extracted_field(self, extracted_field_id: str) -> list[Evidence]:
+        """Return evidence records linked to one extracted field."""
+
+        self.get_extracted_field(extracted_field_id)
+        return sorted(
+            [
+                item
+                for item in self._evidence_by_id.values()
+                if self._source_field_by_evidence_id.get(item.id) == extracted_field_id
+                or (
+                    item.document_id == self._extracted_fields_by_id[extracted_field_id].document_id
+                    and item.page == self._extracted_fields_by_id[extracted_field_id].page
+                    and item.field_name == self._extracted_fields_by_id[extracted_field_id].field_name
+                    and item.value == (
+                        self._extracted_fields_by_id[extracted_field_id].normalized_value
+                        if self._extracted_fields_by_id[extracted_field_id].normalized_value is not None
+                        else self._extracted_fields_by_id[extracted_field_id].value
+                    )
+                )
+            ],
+            key=lambda item: (item.requirement_id, item.id),
+        )
+
     def register_evidence(
         self,
         evidence: Evidence,

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from typing import Callable, Iterable
 
 from app.evidence import EvidenceEngine
@@ -18,7 +18,8 @@ from app.models.domain import (
     Verification,
 )
 from app.rules.status import STATUS_RULES, evaluate_status_requirement
-from app.rules.turnover import evaluate_turnover_requirement
+from app.rules.turnover import evaluate_turnover_requirement, evaluate_greater_than_or_equal_requirement
+from app.rules.temporal import evaluate_certificate_validity_requirement
 
 
 RuleEvaluator = Callable[..., ComplianceResult]
@@ -35,6 +36,8 @@ class ComplianceService:
     def __init__(self, evaluators: dict[str, RuleEvaluator] | None = None) -> None:
         self._evaluators: dict[str, RuleEvaluator] = {
             "RULE-TURNOVER-GTE": evaluate_turnover_requirement,
+            "RULE-LOCAL-CONTENT-GTE": evaluate_greater_than_or_equal_requirement,
+            "RULE-CERTIFICATE-VALID-AT-CLOSING": evaluate_certificate_validity_requirement,
             **{rule_id: evaluate_status_requirement for rule_id in STATUS_RULES},
         }
         if evaluators:
@@ -52,6 +55,7 @@ class ComplianceService:
         result_id: str,
         finding_ids: list[str] | None = None,
         evaluated_at: datetime | None = None,
+        tender_closing_date: date | None = None,
     ) -> ComplianceResult:
         """Evaluate one requirement using only evidence already in the engine."""
 
@@ -95,15 +99,30 @@ class ComplianceService:
             )
         ]
 
-        return evaluator(
-            requirement,
-            evidence,
-            verifications,
-            bidder_id=bidder.id,
-            result_id=result_id,
-            evaluated_at=evaluated_at,
-            finding_ids=finding_ids,
-        )
+        if requirement.rule_id == "RULE-CERTIFICATE-VALID-AT-CLOSING":
+            result = evaluator(
+                requirement, evidence, verifications, bidder_id=bidder.id, result_id=result_id,
+                tender_closing_date=tender_closing_date or self._tender_closing_date(requirement),
+                evaluated_at=evaluated_at, finding_ids=finding_ids,
+            )
+        else:
+            result = evaluator(
+                requirement, evidence, verifications, bidder_id=bidder.id, result_id=result_id,
+                evaluated_at=evaluated_at, finding_ids=finding_ids,
+            )
+        if requirement.rule_id == "RULE-DEBARMENT-CLEAR" and result.status == "FAIL":
+            result = result.model_copy(update={"critical": True})
+        return result
+
+
+    @staticmethod
+    def _tender_closing_date(requirement: TenderRequirement):
+        from datetime import date
+        closing_dates = {"TND-001": date(2026, 10, 30), "TND-002": date(2026, 11, 12)}
+        try:
+            return closing_dates[requirement.tender_id]
+        except KeyError as exc:
+            raise ValueError(f"Unknown tender closing date for {requirement.tender_id!r}") from exc
 
     @staticmethod
     def audit_event_for(
@@ -133,6 +152,20 @@ class ComplianceService:
         """Return the canonical RuleDefinition used for evidence-chain display."""
 
         rule_id = requirement.rule_id
+        if rule_id in {"RULE-TURNOVER-GTE", "RULE-LOCAL-CONTENT-GTE"}:
+            field = "average_annual_turnover" if rule_id == "RULE-TURNOVER-GTE" else "local_content_percentage"
+            return RuleDefinition(
+                id=rule_id, type="NUMERIC_COMPARISON", field=field, operator="GREATER_THAN_OR_EQUAL",
+                threshold_source="requirement.threshold", mandatory=requirement.mandatory, version="1.0",
+            )
+
+        if rule_id == "RULE-CERTIFICATE-VALID-AT-CLOSING":
+            return RuleDefinition(
+                id=rule_id, type="TEMPORAL_COMPARISON", field="certificate_valid_until",
+                operator="VALID_AT_CLOSING", threshold_source="tender.closing_date",
+                mandatory=requirement.mandatory, version="1.0",
+            )
+
         if rule_id == "RULE-TURNOVER-GTE":
             return RuleDefinition(
                 id=rule_id,

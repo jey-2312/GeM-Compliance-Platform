@@ -64,7 +64,7 @@ export const ComplianceMatrixView: React.FC<Props> = ({ activeTenderId, initialR
               <div className="clause-cell"><span className="row-index">{String(index + 1).padStart(2, '0')}</span><div><strong>{requirement?.title || item.req_id}</strong><span>{requirement?.type || item.rule_type} · <EvidenceCitation page={requirement?.source_page}>page {requirement?.source_page || '—'}</EvidenceCitation></span></div></div>
               <div className="expected-cell">{item.threshold}</div>
               <div className="evidence-cell"><strong>{item.actual_extracted}</strong><span>{item.document_name} · {item.page_info}</span></div>
-              <div className="result-cell"><StatusMark status={item.status} /><span className="result-explainer">{item.status === 'PASS' ? 'Rule satisfied' : 'Officer attention'}</span></div>
+              <div className="result-cell"><StatusMark status={item.status} /><span className="result-explainer">{item.critical ? 'Critical failure' : item.status === 'PASS' ? 'Rule satisfied' : 'Officer attention'}</span>{item.gap_to_compliance && <small className="gap-note">{item.gap_to_compliance}</small>}</div>
               <div className="chevron-cell">↗</div>
             </button>
           );

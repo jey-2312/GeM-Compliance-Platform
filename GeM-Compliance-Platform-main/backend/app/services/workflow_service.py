@@ -36,6 +36,7 @@ from app.verification import (
     MockFinancialVerificationConnector,
     MockGSTConnector,
     MockOEMConnector,
+    MockDebarmentConnector,
     MockPANConnector,
     MockUdyamConnector,
 )
@@ -171,6 +172,7 @@ class WorkflowService:
                 result_id=result_id,
                 finding_ids=requirement_findings,
                 evaluated_at=timestamp,
+                tender_closing_date=tender.closing_date,
             )
             audit_id = self._audit_id(tender_id, bidder_id, requirement.id)
             audit = self._compliance_service.audit_event_for(
@@ -347,6 +349,61 @@ class WorkflowService:
             key=lambda item: (item.timestamp, item.id),
         )
 
+    def get_contradiction_radar(self, tender_id: str, bidder_id: str) -> dict[str, Any]:
+        """Aggregate the existing contradiction detector output for a case.
+
+        Severity is derived from the deterministic compliance result that references
+        the finding: findings attached to a FAIL are HIGH; other surfaced findings
+        are MEDIUM. No fraud determination is made here.
+        """
+
+        self.get_tender(tender_id)
+        self.get_bidder(bidder_id)
+        report = self.run(tender_id=tender_id, bidder_id=bidder_id)
+        findings = [ContradictionFinding.model_validate(item) for item in report["findings"]]
+        results = [ComplianceResult.model_validate(item) for item in report["compliance_results"]]
+        results_by_finding: dict[str, list[ComplianceResult]] = {}
+        for result in results:
+            for finding_id in result.finding_ids:
+                results_by_finding.setdefault(finding_id, []).append(result)
+
+        items: list[dict[str, Any]] = []
+        for finding in findings:
+            linked_results = results_by_finding.get(finding.finding_id, [])
+            severity = "HIGH" if any(result.status.value == "FAIL" for result in linked_results) else "MEDIUM"
+            evidence_ids: list[str] = []
+            evidence_by_field_id = {
+                finding.left_field_id: self._evidence_engine.get_evidence_for_extracted_field(finding.left_field_id),
+                finding.right_field_id: self._evidence_engine.get_evidence_for_extracted_field(finding.right_field_id),
+            }
+            for evidence_list in evidence_by_field_id.values():
+                evidence_ids.extend(item.id for item in evidence_list if item.bidder_id == bidder_id)
+            items.append({
+                "finding_id": finding.finding_id,
+                "severity": severity,
+                "field_name": finding.field_name,
+                "left_field_id": finding.left_field_id,
+                "right_field_id": finding.right_field_id,
+                "left_value": finding.left_value,
+                "right_value": finding.right_value,
+                "left_source_label": finding.left_source_label,
+                "right_source_label": finding.right_source_label,
+                "evidence_ids": sorted(set(evidence_ids)),
+                "result_ids": [result.id for result in linked_results],
+                "explanation": finding.explanation,
+                "requires_manual_review": finding.requires_manual_review,
+            })
+
+        items.sort(key=lambda item: (0 if item["severity"] == "HIGH" else 1, item["finding_id"]))
+        return {
+            "tender_id": tender_id,
+            "bidder_id": bidder_id,
+            "total": len(items),
+            "high": sum(item["severity"] == "HIGH" for item in items),
+            "medium": sum(item["severity"] == "MEDIUM" for item in items),
+            "findings": items,
+        }
+
     def _ensure_requirement_evidence(
         self,
         bidder: Bidder,
@@ -382,6 +439,9 @@ class WorkflowService:
             if requirement.rule_id == "RULE-MANUAL-REVIEW":
                 continue
 
+            if requirement.rule_id in {"RULE-LOCAL-CONTENT-GTE", "RULE-CERTIFICATE-VALID-AT-CLOSING"}:
+                continue
+
             field_name = self._field_name_for_status_requirement(requirement)
             template = self._find_passport_evidence(bidder.id, field_name)
             if template is None:
@@ -402,12 +462,14 @@ class WorkflowService:
             "pan_status": MockPANConnector(),
             "udyam_status": MockUdyamConnector(),
             "oem_authorization_status": MockOEMConnector(),
+            "debarment_status": MockDebarmentConnector(),
         }
         subject_by_field = {
             "gst_status": bidder.gstin,
             "pan_status": bidder.pan,
             "udyam_status": bidder.udyam,
             "oem_authorization_status": bidder.id,
+            "debarment_status": bidder.id,
         }
 
         for requirement in requirements:
@@ -613,6 +675,7 @@ class WorkflowService:
             "RULE-PAN-VALID": "pan_status",
             "RULE-UDYAM-ACTIVE": "udyam_status",
             "RULE-OEM-AUTHORIZATION-ACTIVE": "oem_authorization_status",
+            "RULE-DEBARMENT-CLEAR": "debarment_status",
         }
         try:
             return mapping[requirement.rule_id]

@@ -137,17 +137,17 @@
   {
     "id": "REQ-TND-001-010",
     "tender_id": "TND-001",
-    "type": "OTHER",
+    "type": "LOCAL_CONTENT",
     "title": "Local Content",
     "description": "Primary equipment package must meet minimum local content of 50%.",
-    "operator": "EQUAL",
+    "operator": "GREATER_THAN_OR_EQUAL",
     "threshold": 50,
     "unit": "PERCENT",
     "mandatory": true,
     "source_document_id": "DOC-TENDER-001",
     "source_page": 5,
     "confidence": 0.93,
-    "rule_id": "RULE-MANUAL-REVIEW"
+    "rule_id": "RULE-LOCAL-CONTENT-GTE"
   },
   {
     "id": "REQ-TND-001-011",
@@ -227,17 +227,17 @@
   {
     "id": "REQ-TND-001-016",
     "tender_id": "TND-001",
-    "type": "OTHER",
+    "type": "DEBARMENT",
     "title": "Non-Blacklisting Declaration",
     "description": "Bidder must not be blacklisted, banned or debarred as of bid submission.",
-    "operator": "EQUAL",
+    "operator": "STATUS_NOT_DEBARRED",
     "threshold": null,
     "unit": null,
     "mandatory": true,
     "source_document_id": "DOC-TENDER-001",
     "source_page": 16,
     "confidence": 0.93,
-    "rule_id": "RULE-MANUAL-REVIEW"
+    "rule_id": "RULE-DEBARMENT-CLEAR"
   },
   {
     "id": "REQ-TND-001-017",

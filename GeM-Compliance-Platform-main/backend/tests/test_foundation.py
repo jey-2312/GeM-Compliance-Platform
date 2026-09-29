@@ -19,9 +19,9 @@ def test_all_seed_fixtures_validate():
     assert len(loaded["requirements.json"]) == 36
     assert len(loaded["bidders.json"]) == 1
     assert len(loaded["documents.json"]) == 6
-    assert len(loaded["evidence.json"]) == 6
-    assert len(loaded["verifications.json"]) == 4
-    assert len(loaded["rules.json"]) == 6
+    assert len(loaded["evidence.json"]) == 11
+    assert len(loaded["verifications.json"]) == 7
+    assert len(loaded["rules.json"]) == 9
 
 
 def test_tender_a_turnover_fails():

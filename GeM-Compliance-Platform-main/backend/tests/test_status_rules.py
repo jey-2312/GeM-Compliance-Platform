@@ -73,3 +73,15 @@ def test_status_rule_does_not_accept_unverified_document_claim_as_verified():
     result = _evaluate("REQ-TND-001-002", "gst_status", "ACTIVE", status="UNVERIFIED")
     assert result.status is ComplianceStatus.UNVERIFIABLE
     assert result.evidence_ids == []
+
+
+def test_debarment_clear_passes_when_registry_returns_not_debarred():
+    result = _evaluate("REQ-TND-001-016", "debarment_status", "NOT_DEBARRED")
+    assert result.status is ComplianceStatus.PASS
+    assert result.expected == "NOT_DEBARRED"
+
+
+def test_debarment_found_record_fails():
+    result = _evaluate("REQ-TND-001-016", "debarment_status", "DEBARRED")
+    assert result.status is ComplianceStatus.FAIL
+    assert result.actual == "DEBARRED"

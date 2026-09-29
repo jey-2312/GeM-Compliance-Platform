@@ -1,1 +1,1 @@
-export type DemoTab = 'overview' | 'compliance' | 'passport' | 'activity';
+export type DemoTab = 'overview' | 'compliance' | 'evidence' | 'contradictions' | 'passport' | 'activity';

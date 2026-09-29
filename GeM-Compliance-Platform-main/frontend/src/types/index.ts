@@ -114,6 +114,8 @@ export interface BackendComplianceResult {
   finding_ids: string[];
   explanation: string;
   evaluated_at: string;
+  gap_to_compliance?: string | null;
+  critical?: boolean;
 }
 
 export interface BackendAuditEvent {
@@ -221,6 +223,8 @@ export interface ComplianceMatrixItem {
   evidence_ids: string[];
   finding_ids: string[];
   evaluated_at: string;
+  gap_to_compliance?: string | null;
+  critical?: boolean;
 }
 
 export interface OfficerDecision {
@@ -229,4 +233,29 @@ export interface OfficerDecision {
   timestamp: string;
   sha256_hash: string;
   officer_id: string;
+}
+
+export interface ContradictionRadarItem {
+  finding_id: string;
+  severity: 'HIGH' | 'MEDIUM';
+  field_name: string;
+  left_field_id: string;
+  right_field_id: string;
+  left_value: unknown;
+  right_value: unknown;
+  left_source_label: string;
+  right_source_label: string;
+  evidence_ids: string[];
+  result_ids: string[];
+  explanation: string;
+  requires_manual_review: boolean;
+}
+
+export interface ContradictionRadarResponse {
+  tender_id: string;
+  bidder_id: string;
+  total: number;
+  high: number;
+  medium: number;
+  findings: ContradictionRadarItem[];
 }

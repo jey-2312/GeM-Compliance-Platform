@@ -32,6 +32,8 @@ from app.api.schemas import (
     EvidenceListResponse,
     ExplanationResponse,
     HealthResponse,
+    DemoSummaryResponse,
+    ContradictionRadarResponse,
     OfficerAuditEvent,
     OfficerDecisionRequest,
     OfficerDecisionResponse,
@@ -44,7 +46,7 @@ from app.api.schemas import (
     VerificationProvidersResponse,
     VerificationRequest,
 )
-from app.api.state import AppState
+from app.api.state import AppState, build_default_state
 from app.models.domain import Bidder, ComplianceResult, Tender, TenderRequirement
 from app.rules.registry import rule_id_for
 from app.services.requirement_adapter import adapt_requirement_candidates
@@ -141,7 +143,50 @@ def _audit_trail(state: AppState, tender_id: str, bidder_id: str) -> list[Office
 
 @router.get("/health", response_model=HealthResponse, tags=["system"])
 def health(state: AppState = Depends(get_state)) -> HealthResponse:
-    return HealthResponse(verification_mode=state.verification.mode)
+    ai_configured = bool(os.getenv("LLM_API_KEY"))
+    return HealthResponse(
+        verification_mode=state.verification.mode,
+        checks={
+            "database": "in_memory_prototype",
+            "ai": "configured" if ai_configured else "demo_fallback_available",
+            "verification": state.verification.mode,
+        },
+    )
+
+
+@router.get("/demo/summary", response_model=DemoSummaryResponse, tags=["system"])
+def demo_summary(state: AppState = Depends(get_state)) -> DemoSummaryResponse:
+    reports = [state.workflow.run(tender_id=t.id, bidder_id="BIDDER-001") for t in state.workflow.list_tenders()]
+    return DemoSummaryResponse(
+        tenders=len(state.workflow.list_tenders()),
+        bidders=len(state.workflow.list_bidders()),
+        requirements=sum(len(r["requirements"]) for r in reports),
+        evidence_checks=sum(len(r["compliance_results"]) for r in reports),
+        contradictions=len({f["finding_id"] for r in reports for f in r["findings"]}),
+        manual_review_items=sum(r["summary"].get("MANUAL_REVIEW", 0) for r in reports),
+    )
+
+
+@router.post("/demo/reset", response_model=dict, tags=["system"])
+def reset_demo(state: AppState = Depends(get_state)) -> dict:
+    """Restore the seeded in-memory demo state for the next evaluator."""
+    fresh = build_default_state()
+    state.workflow = fresh.workflow
+    state.verification = fresh.verification
+    state.officer_events.clear()
+    state.reviewed_tenders_by_bidder.clear()
+    state.extraction_cache.clear()
+    return {"success": True, "message": "Demo state reset to the seeded baseline."}
+
+
+@router.get("/contradictions/{tender_id}/{bidder_id}", response_model=ContradictionRadarResponse, tags=["contradictions"])
+def contradiction_radar(tender_id: str, bidder_id: str, state: AppState = Depends(get_state)) -> ContradictionRadarResponse:
+    """Aggregate existing contradiction findings for a tender/bidder case."""
+    try:
+        payload = state.workflow.get_contradiction_radar(tender_id, bidder_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    return ContradictionRadarResponse.model_validate(payload)
 
 
 
@@ -193,78 +238,61 @@ def list_requirements(tender_id: str, state: AppState = Depends(get_state)):
 def extract_tender_requirements(
     tender_id: str,
     live: bool = False,
+    mode: str | None = None,
     state: AppState = Depends(get_state),
 ) -> TenderExtractionResponse:
-    """Refresh requirements from the canonical fixture, or run the real LLM path when requested."""
-
+    """Run demo extraction or the live LLM path with a transparent fallback."""
     try:
         tender = state.workflow.get_tender(tender_id)
         canonical_requirements = state.workflow.get_requirements_for_tender(tender_id)
     except ValueError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 
+    requested_live = (mode or ("live" if live else "demo")).strip().lower() == "live"
     source_document_id = tender.documents[0] if tender.documents else f"DOC-{tender_id}"
-    if live and not os.getenv("LLM_API_KEY"):
-        raise HTTPException(status_code=503, detail="LLM_API_KEY is not configured. Refresh mode can still load the frozen canonical fixture.")
 
-    use_live = live
-
-    if not use_live:
+    def demo_response(message: str, *, fallback: bool = False) -> TenderExtractionResponse:
         return TenderExtractionResponse(
-            tender=tender,
-            requirements=canonical_requirements,
-            extraction_method="CANONICAL_SEED_FIXTURE",
-            ocr_used=False,
-            ai_used=False,
-            mean_confidence=(
-                sum(item.confidence for item in canonical_requirements) / len(canonical_requirements)
-                if canonical_requirements
-                else None
-            ),
-            message=(
-                "Loaded the frozen prototype tender requirements. Set LLM_API_KEY and call "
-                "?live=true to exercise the real LLM extraction path."
-            ),
+            tender=tender, requirements=canonical_requirements, extraction_method="VALIDATED_EXTRACTION_DEMO",
+            ocr_used=False, ai_used=False,
+            mean_confidence=(sum(item.confidence for item in canonical_requirements) / len(canonical_requirements)) if canonical_requirements else None,
+            message=message, fallback_used=fallback,
         )
 
+    if not requested_live:
+        return demo_response("Validated demonstration data loaded; no LLM call was made.")
+
     pdf_map = {
-        "TND-001": _repo_root() / "data" / "tenders" / "Tender_A_Sample.pdf",
-        "TND-002": _repo_root() / "data" / "tenders" / "Tender_B_Sample.pdf",
+        "TND-001": _repo_root() / "data" / "tenders" / "Tender_A.pdf",
+        "TND-002": _repo_root() / "data" / "tenders" / "Tender_B.pdf",
     }
     pdf_path = pdf_map.get(tender_id)
     if pdf_path is None or not pdf_path.exists():
-        raise HTTPException(status_code=500, detail="Live tender extraction source PDF is unavailable")
+        return demo_response("Live extraction source is unavailable — showing validated demonstration data instead.", fallback=True)
+
+    document_hash = hashlib.sha256(pdf_path.read_bytes()).hexdigest()
+    cached = state.extraction_cache.get(document_hash)
+    if cached is not None:
+        return TenderExtractionResponse(**cached, message="Live extraction loaded from the validated document-hash cache.")
+
+    if not os.getenv("LLM_API_KEY"):
+        return demo_response("AI extraction temporarily unavailable — showing validated demonstration data instead.", fallback=True)
 
     try:
         pages = extract_pages_from_pdf(pdf_path)
         page_text = "\n\n".join(page.text for page in pages)
-        extraction = extract_requirements(
-            tender_id,
-            page_text,
-            model=os.getenv("LLM_MODEL", "openai/gpt-oss-20b"),
-            pages=pages,
-        )
-        adapted = adapt_requirement_candidates(
-            extraction,
-            tender_id=tender_id,
-            source_document_id=source_document_id,
-        )
-    except NotImplementedError as exc:
-        raise HTTPException(status_code=422, detail=str(exc)) from exc
-    except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"LLM extraction failed: {exc}") from exc
-
-    # The prototype keeps the canonical tender object stable. This response is a live extraction
-    # preview; persistence remains fixture-backed so a single LLM error cannot corrupt the demo state.
-    return TenderExtractionResponse(
-        tender=tender,
-        requirements=adapted,
-        extraction_method="PYMUPDF+LLM",
-        ocr_used=False,
-        ai_used=True,
-        mean_confidence=(sum(item.confidence for item in adapted) / len(adapted)) if adapted else None,
-        message="PyMuPDF page-aware extraction and validated structured LLM requirement extraction completed.",
-    )
+        extraction = extract_requirements(tender_id, page_text, model=os.getenv("LLM_MODEL", "openai/gpt-oss-20b"), pages=pages)
+        adapted = adapt_requirement_candidates(extraction, tender_id=tender_id, source_document_id=source_document_id)
+        payload = {
+            "tender": tender, "requirements": adapted, "extraction_method": "PYMUPDF+LLM",
+            "ocr_used": False, "ai_used": True,
+            "mean_confidence": (sum(item.confidence for item in adapted) / len(adapted)) if adapted else None,
+            "fallback_used": False,
+        }
+        state.extraction_cache[document_hash] = {**payload, "message": "Live extraction completed."}
+        return TenderExtractionResponse(**payload, message="PyMuPDF page-aware extraction and validated structured LLM extraction completed.")
+    except Exception:
+        return demo_response("AI extraction temporarily unavailable — showing validated demonstration data instead.", fallback=True)
 
 
 @router.get("/bidders", response_model=list[Bidder], tags=["bidders"])
@@ -368,6 +396,7 @@ def verify_bidder(bidder_id: str, state: AppState = Depends(get_state)):
         ("gst", bidder.gstin, "gst_status"),
         ("pan", bidder.pan, "pan_status"),
         ("udyam", bidder.udyam, "udyam_status"),
+        ("debarment", bidder.id, "debarment_status"),
     ]
     # Financial verification is included because it is part of the reusable passport evidence set.
     audited_evidence = next(
@@ -700,11 +729,12 @@ def intake_tender_document(request: TenderIntakeRequest, state: AppState = Depen
             except OSError:
                 pass
 
-    ai_used = bool(os.getenv("LLM_API_KEY"))
-    extraction_method = "PYMUPDF+CANONICAL_ADAPTER"
+    ai_used = False
+    extraction_method = "PYMUPDF+CANONICAL_DATASET"
     message = (
         f"Uploaded document recognized by extracted reference ({recognition}). "
-        "The controlled prototype then evaluated the bidder using the backend rule engine."
+        "This controlled prototype uses the validated tender requirement dataset for the recognized demo tender; "
+        "no live LLM extraction was used on this intake path."
     )
 
     try:

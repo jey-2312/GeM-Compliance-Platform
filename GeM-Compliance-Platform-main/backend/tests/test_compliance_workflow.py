@@ -63,7 +63,7 @@ def test_tender_b_reuses_same_bidder_evidence_and_changes_only_tender_result():
     assert results["REQ-TND-002-004"]["status"] == ComplianceStatus.PASS.value
     assert results["REQ-TND-002-005"]["status"] == ComplianceStatus.PASS.value
 
-    assert report["summary"] == {"PASS": 5, "MANUAL_REVIEW": 13}
+    assert report["summary"] == {"PASS": 8, "MANUAL_REVIEW": 10}
 
 
 def test_passport_mock_verifications_are_visible_in_workflow_report():
@@ -139,4 +139,4 @@ def test_repeated_workflow_run_does_not_duplicate_evidence_or_verifications():
     ]
     assert len(service.evidence_engine.get_all_evidence()) == evidence_count
     assert len(service.evidence_engine.get_all_verifications()) == verification_count
-    assert second["summary"] == {"PASS": 5, "MANUAL_REVIEW": 13}
+    assert second["summary"] == {"PASS": 8, "MANUAL_REVIEW": 10}

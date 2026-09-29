@@ -122,32 +122,32 @@
   {
     "id": "REQ-TND-002-009",
     "tender_id": "TND-002",
-    "type": "OTHER",
+    "type": "LOCAL_CONTENT",
     "title": "Local Content",
     "description": "Core network equipment package must meet minimum local content of 40%.",
-    "operator": "EQUAL",
+    "operator": "GREATER_THAN_OR_EQUAL",
     "threshold": 40,
     "unit": "PERCENT",
     "mandatory": true,
     "source_document_id": "DOC-TENDER-002",
     "source_page": 4,
     "confidence": 0.93,
-    "rule_id": "RULE-MANUAL-REVIEW"
+    "rule_id": "RULE-LOCAL-CONTENT-GTE"
   },
   {
     "id": "REQ-TND-002-010",
     "tender_id": "TND-002",
-    "type": "OTHER",
+    "type": "DEBARMENT",
     "title": "Non-Blacklisting / Debarment",
     "description": "Bidder must not be blacklisted, banned or debarred.",
-    "operator": "EQUAL",
+    "operator": "STATUS_NOT_DEBARRED",
     "threshold": null,
     "unit": null,
     "mandatory": true,
     "source_document_id": "DOC-TENDER-002",
     "source_page": 5,
     "confidence": 0.93,
-    "rule_id": "RULE-MANUAL-REVIEW"
+    "rule_id": "RULE-DEBARMENT-CLEAR"
   },
   {
     "id": "REQ-TND-002-011",
@@ -257,16 +257,16 @@
   {
     "id": "REQ-TND-002-018",
     "tender_id": "TND-002",
-    "type": "OTHER",
+    "type": "TEMPORAL_CERTIFICATE",
     "title": "Certificate Validity at Closing",
     "description": "Mandatory certificates must remain valid on the tender closing date.",
-    "operator": "EQUAL",
+    "operator": "VALID_AT_CLOSING",
     "threshold": null,
     "unit": null,
     "mandatory": true,
     "source_document_id": "DOC-TENDER-002",
     "source_page": 5,
     "confidence": 0.93,
-    "rule_id": "RULE-MANUAL-REVIEW"
+    "rule_id": "RULE-CERTIFICATE-VALID-AT-CLOSING"
   }
 ]

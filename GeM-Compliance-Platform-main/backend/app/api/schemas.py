@@ -31,6 +31,42 @@ class HealthResponse(APIModel):
     service: str = "GeM Compliance Platform Backend"
     version: str = "0.1.0"
     verification_mode: str
+    checks: dict[str, str] = Field(default_factory=dict)
+
+
+class DemoSummaryResponse(APIModel):
+    tenders: int
+    bidders: int
+    requirements: int
+    evidence_checks: int
+    contradictions: int
+    manual_review_items: int
+    checks: dict[str, str] = Field(default_factory=dict)
+
+
+class ContradictionRadarItem(APIModel):
+    finding_id: str
+    severity: Literal["HIGH", "MEDIUM"]
+    field_name: str
+    left_field_id: str
+    right_field_id: str
+    left_value: Any
+    right_value: Any
+    left_source_label: str
+    right_source_label: str
+    evidence_ids: list[str] = Field(default_factory=list)
+    result_ids: list[str] = Field(default_factory=list)
+    explanation: str
+    requires_manual_review: bool = True
+
+
+class ContradictionRadarResponse(APIModel):
+    tender_id: str
+    bidder_id: str
+    total: int
+    high: int
+    medium: int
+    findings: list[ContradictionRadarItem]
 
 
 class EvaluateComplianceRequest(APIModel):
@@ -40,7 +76,7 @@ class EvaluateComplianceRequest(APIModel):
 
 
 class VerificationRequest(APIModel):
-    kind: Literal["gst", "pan", "udyam", "financial"]
+    kind: Literal["gst", "pan", "udyam", "financial", "oem", "debarment"]
     subject: str = Field(min_length=1)
     evidence_id: str = Field(min_length=1)
     checked_at: datetime | None = None
@@ -104,6 +140,7 @@ class TenderExtractionResponse(APIModel):
     ai_used: bool
     mean_confidence: float | None = None
     message: str
+    fallback_used: bool = False
 
 
 class BidderPassportResponse(APIModel):
